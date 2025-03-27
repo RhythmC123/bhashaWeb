@@ -1,0 +1,172 @@
+/* Admin.module.css */
+.container {
+  display: flex;
+  min-height: 100vh;
+  background: #fff;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: #cf9d72;
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navLinks {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.navItem {
+  font-size: 1rem;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navItem:hover {
+  text-decoration: underline;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #E67732;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar nav ul li {
+  margin: 15px 0;
+}
+
+.sidebar nav ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Main Content */
+.mainContent {
+  flex: 1;
+  padding: 20px;
+  background: #F5E6DA; /* Creme color */
+  margin-left: 250px;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #E67732;
+}
+
+.subtext {
+  color: #555;
+}
+
+/* Course List */
+.courseList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+
+.courseCard {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.courseCard:hover {
+  transform: scale(1.05);
+}
+
+.createButton {
+  background: #E67732;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.createButton:hover {
+  background: #cf5f1e;
+}
+
+/* Module Creation Interface */
+.moduleContainer {
+  margin-top: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.moduleTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.moduleForm {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputField,
+.textArea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.createButton {
+  background: #E67732;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.createButton:hover {
+  background: #cf5f1e;
+}

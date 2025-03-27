@@ -1,0 +1,45 @@
+/* Map.module.css */
+.mapContainer {
+    padding: 20px;
+    background: #F5E6DA;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .heading {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #E67732;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .mapGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    align-items: center;
+  }
+  
+  .moduleBox {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  
+  .moduleBox:hover {
+    transform: scale(1.1);
+  }
+  
+  .completed {
+    background: #E67732;
+    color: white;
+  }
+  
