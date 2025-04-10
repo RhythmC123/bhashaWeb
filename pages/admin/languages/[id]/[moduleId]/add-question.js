@@ -27,6 +27,7 @@ function AddQuestionPage() {
         if (error) {
           console.error('Error fetching questions:', error);
         } else {
+          console.log('Fetched Question:', data);  // Log the fetched question data
           setQuestions(data);
         }
       };
@@ -146,13 +147,14 @@ function AddQuestionPage() {
             <ul>
               {questions.map((question) => (
                 <li key={question.id} className={styles.questionCard}>
-                    <p><strong>ID:</strong> {question.id}</p>
+                  <p><strong>ID:</strong> {question.id}</p>
                   <h3>{question.prompt}</h3>
                   <p>{question.answer}</p>
                   <p><strong>Type:</strong> {question.type}</p>
                 </li>
               ))}
             </ul>
+
           )}
         </div>
       </main>

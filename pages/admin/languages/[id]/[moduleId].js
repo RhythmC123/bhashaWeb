@@ -75,22 +75,7 @@ function SpecificModulePage() {
         <h1 className={styles.heading}>{module.title} - Questions</h1>
         <p className={styles.subtext}>Click on a question to edit or add a new one.</p>
 
-        <div className={styles.courseList}>
-          {questions.length === 0 ? (
-            <p>No questions found for this module.</p>
-          ) : (
-            questions.map((question) => (
-              <div
-                key={question.id}
-                className={styles.courseCard}
-                onClick={() => router.push(`/admin/questions/${question.id}`)} // Navigate to question details page
-              >
-                <h3>{question.text}</h3>
-                <p>{question.description}</p>
-              </div>
-            ))
-          )}
-        </div>
+
 
         {/* Option to add a new question */}
         <div className={styles.moduleContainer}>
@@ -98,6 +83,27 @@ function SpecificModulePage() {
             <button className={styles.createButton}>Add a Question</button>
         </Link>
         </div>
+
+
+        <div className={styles.questionsList}>
+          <h2 className={styles.subHeading}>Questions in this Module</h2>
+          {questions.length === 0 ? (
+            <p>No questions available for this module.</p>
+          ) : (
+            <ul>
+              {questions.map((question) => (
+                <li key={question.id} className={styles.questionCard}>
+                  <p><strong>ID:</strong> {question.id}</p>
+                  <h3>{question.prompt}</h3>
+                  <p>{question.answer}</p>
+                  <p><strong>Type:</strong> {question.type}</p>
+                </li>
+              ))}
+            </ul>
+
+          )}
+        </div>
+
       </main>
     </div>
   );
