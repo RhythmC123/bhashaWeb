@@ -1,16 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { supabase } from '../supabaseClient';
 import styles from '../styles/Admin.module.css';
 import { InstagramIcon, TwitterIcon, PlusCircle } from "lucide-react";
-import { useRouter } from 'next/router';
 
 function AdminPanel() {
   const router = useRouter();
+  const [languages, setLanguages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const courses = [
-    { id: 1, name: "Spanish Basics", modified: "2025-03-20" },
-    { id: 2, name: "French Intermediate", modified: "2025-03-18" }
-  ];
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      const { data, error } = await supabase
+        .from('languages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching languages:', error);
+      } else {
+        setLanguages(data);
+      }
+
+      setLoading(false);
+    };
+
+    fetchLanguages();
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -30,15 +47,14 @@ function AdminPanel() {
           </div>
         </nav>
       </header>
-      
+
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <h2 className={styles.title}>Admin Panel</h2>
         <nav>
           <ul>
-            <li><Link href="/admin/modules">Modules</Link></li>
-            <li><Link href="/admin/questions">Questions</Link></li>
-            <li><Link href="/admin/languages">Languages</Link></li>
+            <li><Link href="/admin/subscribers">Subscriber list</Link></li>
+            {/* <li><Link href="/admin/preview">Preview app</Link></li> */}
           </ul>
         </nav>
       </aside>
@@ -48,21 +64,33 @@ function AdminPanel() {
         <h1 className={styles.heading}>Manage Your Courses</h1>
         <p className={styles.subtext}>Create and manage modules efficiently.</p>
 
-        {/* Add Course Button */}
-        <div className={styles.addCourseContainer}>
-          <button className={styles.addCourseButton}>
-            <PlusCircle size={50} />
-          </button>
-        </div>
+        <button
+          className={styles.addCourseButton}
+          onClick={() => router.push('/admin/create-language')}
+        >
+          <PlusCircle size={50} />
+        </button>
 
         {/* Course List */}
         <div className={styles.courseList}>
-          {courses.map(course => (
-            <div key={course.id} className={styles.courseCard} onClick={() => router.push('/map')}>
-              <h3>{course.name}</h3>
-              <p>Last Modified: {course.modified}</p>
-            </div>
-          ))}
+          {loading ? (
+            <p>Loading...</p>
+          ) : languages.length === 0 ? (
+            <p>No languages found.</p>
+          ) : (
+            languages.map(lang => (
+              <div
+                key={lang.id}
+                className={styles.courseCard}
+                onClick={() => router.push(`/admin/languages/${lang.id}`)}
+              >
+                <h3>{lang.name}</h3>
+                <p>
+                  Created: {new Date(lang.created_at).toLocaleDateString()}
+                </p>
+              </div>
+            ))
+          )}
         </div>
       </main>
     </div>
