@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient"; // Ensure this is the correct path to your Supabase client
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { InstagramIcon, TwitterIcon } from "lucide-react";
 import { Mail } from "lucide-react";
 
+const animateTeam = dynamic(() =>
+  import("./animateTeam").then((mod) => mod.animateTeam), { ssr: false }
+);
 export default function Index() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    animateTeam();
+  }, []);
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -118,41 +125,20 @@ export default function Index() {
       <section className="container flex flex-col items-left mx-auto p-10">
         <h1 className="text-5xl font-bold py-10">Meet The Team</h1>
         <div className="container grid grid-cols-3 gap-5">
-          <div className="flex flex-col items-center">
-            <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt="Shrivas Manglampalli" />
-            <p className="text-lg font-bold">Shrivas Manglampalli</p>
-            <p className="text-md">CEO</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt="Gurtej Bagga" />
-            <p className="text-lg font-bold">Gurtej Bagga</p>
-            <p className="text-md">CTO</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt="Sri Kotala" />
-            <p className="text-lg font-bold">Sri Kotala</p>
-            <p className="text-md">Lead Software Developer</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt="Amvi Dwivedi" />
-            <p className="text-lg font-bold">Amvi Dwivedi</p>
-            <p className="text-md">Marketer</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt="Abhinav Jain" />
-            <p className="text-lg font-bold">Abhinav Jain</p>
-            <p className="text-md">Developer</p>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt="Rhythm Chawla" />
-            <p className="text-lg font-bold">Rhythm Chawla</p>
-            <p className="text-md">Developer</p>
-          </div>
+          {[
+            { name: "Shrivas Manglampalli", role: "CEO" },
+            { name: "Gurtej Bagga", role: "CTO" },
+            { name: "Sri Kotala", role: "Lead Software Developer" },
+            { name: "Amvi Dwivedi", role: "Marketer" },
+            { name: "Abhinav Jain", role: "Developer" },
+            { name: "Rhythm Chawla", role: "Developer" }
+          ].map((member, index) => (
+            <div key={index} className="team-column flex flex-col items-center">
+              <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt={member.name} />
+              <p className="text-lg font-bold">{member.name}</p>
+              <p className="text-md">{member.role}</p>
+            </div>
+          ))}
         </div>
       </section>
 
