@@ -9,6 +9,10 @@ import { Mail } from "lucide-react";
 const animateTeam = dynamic(() =>
   import("./animateTeam").then((mod) => mod.animateTeam), { ssr: false }
 );
+
+const BigLogo = dynamic(() => import("./bigLogo"), { ssr: false });
+
+
 export default function Index() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -16,8 +20,14 @@ export default function Index() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    animateTeam();
-  }, []);
+  async function runAnimation() {
+    const mod = await import("./animateTeam");
+    mod.animateTeam();
+  }
+
+  runAnimation();
+}, []);
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,22 +51,12 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-[#e67732] text-white font-serif">
-      <header className="sticky top-0 w-full bg-[#cf9d72]">
+      <header className="sticky z-50 top-0 w-full bg-[#cf9d72]">
         <nav className="container mx-auto justify-between items-center py-6 px-4">
-          <div className="flex text-left gap-4">
-            <Link href="https://www.instagram.com/learnwithbhasha?igsh=YjdhaHh4amU1YWdj">
-              <InstagramIcon size={32} />
-            </Link>
-
-            <Link href="">
-              <TwitterIcon size={32} />
-            </Link>
-
+          <div className="flex items-center gap-4">
+            <img className="bhashaicon w-15 h-15 rounded-full" src="/images/bhasha.jpeg" alt="bhasha" />
             <Link href="/">
               <span className="text-lg">Home</span>
-            </Link>
-            <Link href="/">
-              <span className="text-lg">About</span>
             </Link>
             <Link href="/admin">
               <span className="text-lg">Admin</span>
@@ -77,23 +77,7 @@ export default function Index() {
       </div>
 
       <div className="flex justify-center items-center mx-auto p-10">
-        <div className="space-y-4">
-          <p className="text-3xl font-bold opacity-50">
-            <span className="flex justify-center">જલ્દી આવે છે</span>
-          </p>
-          <p className="text-4xl font-bold opacity-75">
-            <span className="flex justify-center">சமீபத்தில் வரும்</span>
-          </p>
-          <h2 className="text-5xl font-bold my-4">
-            <span className="flex justify-center">Coming Soon.</span>
-          </h2>
-          <p className="text-4xl font-bold opacity-75">
-            <span className="flex justify-center">త్వరలో వస్తుంది</span>
-          </p>
-          <p className="text-3xl font-bold opacity-50">
-            <span className="flex justify-center">आ रहा है</span>
-          </p>
-        </div>
+        <BigLogo />
       </div>
 
       <div className="flex justify-center items-center mx-auto p-20">
@@ -102,8 +86,8 @@ export default function Index() {
         </button>
       </div>
 
-      <section className="container flex flex-col items-center mx-auto p-10">
-        <div className="text-left">
+      <section className="w-full flex flex-col items-center p-10 bg-white">
+        <div className="w-full max-w-6xl text-left text-[#e67732]">
           <h1 className="text-5xl font-bold py-10">Who we are?</h1>
           <p className="text-lg py-2">
             Bhāsha was founded with the goal of making Indian language learning as simple as possible.
@@ -121,6 +105,7 @@ export default function Index() {
           <p className="text-2xl italic font-bold py-5">Join Us.</p>
         </div>
       </section>
+
 
       <section className="container flex flex-col items-left mx-auto p-10">
         <h1 className="text-5xl font-bold py-10">Meet The Team</h1>
@@ -171,6 +156,29 @@ export default function Index() {
           )}
         </div>
       </section>
+
+
+      <section className="bg-black text-white p-10">
+        <div className="container mx-auto text-center p-10 mb-16">
+          <h1 className="text-4xl font-bold mb-6">Follow Us</h1>
+          <div className="flex justify-center gap-6 pb-6">
+            <Link href="https://www.instagram.com/learnwithbhasha?igsh=YjdhaHh4amU1YWdj" target="_blank">
+              <InstagramIcon size={32} />
+            </Link>
+            <Link href="" target="_blank">
+              <TwitterIcon size={32} />
+            </Link>
+          </div>
+          <p className="text-sm mb-6">© 2025 Bhasha. All rights reserved.</p>
+          <Link href="/admin" className="bg-gray-400 text-white p-2 rounded-lg hover:bg-gray-700">
+            Admin
+          </Link>   
+        </div>
+      </section>
+    
+      <div className="fixed bottom-0 right-0 p-4">
+        
+      </div>
     </div>
   );
 }
