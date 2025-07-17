@@ -58,9 +58,9 @@ export default function Index() {
             <Link href="/">
               <span className="text-lg">Home</span>
             </Link>
-            <Link href="/admin">
+            {/* <Link href="/admin">
               <span className="text-lg">Admin</span>
-            </Link>
+            </Link> */}
           </div>
         </nav>
       </header>
