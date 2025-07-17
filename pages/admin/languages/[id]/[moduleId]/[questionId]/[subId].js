@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../../../../../supabaseClient';
+import supabase from '../../../../../../supabaseClient';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import styles from '../../../../../../styles/Admin.module.css';

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import styles from '../../styles/Admin.module.css';
 import { InstagramIcon, TwitterIcon } from 'lucide-react';
-import { supabase } from '../../supabaseClient';
+import supabase from '../../supabaseClient';
 
 function Questions() {
   const [questions, setQuestions] = useState([]);

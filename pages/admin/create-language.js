@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { supabase } from '../../supabaseClient';
+ from '../../supabaseClient';
 import Link from 'next/link';
 import { InstagramIcon, TwitterIcon } from "lucide-react";
 import styles from '../../styles/Admin.module.css';

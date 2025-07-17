@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient"; // Ensure this is the correct path to your Supabase client
+import supabase from "../supabaseClient"; // Ensure this is the correct path to your Supabase client
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
