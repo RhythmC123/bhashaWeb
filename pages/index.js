@@ -7,7 +7,7 @@ import { InstagramIcon, TwitterIcon } from "lucide-react";
 import { Mail } from "lucide-react";
 
 const animateTeam = dynamic(() =>
-  import("./animateTeam").then((mod) => mod.animateTeam), { ssr: false }
+  import("../hooks/animateTeam").then((mod) => mod.animateTeam), { ssr: false }
 );
 
 const BigLogo = dynamic(() => import("./bigLogo"), { ssr: false });
@@ -21,7 +21,7 @@ export default function Index() {
 
   useEffect(() => {
   async function runAnimation() {
-    const mod = await import("./animateTeam");
+    const mod = await import("../hooks/animateTeam");
     mod.animateTeam();
   }
 
