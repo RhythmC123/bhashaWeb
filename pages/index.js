@@ -109,22 +109,25 @@ export default function Index() {
 
       <section className="container flex flex-col items-left mx-auto p-10">
         <h1 className="text-5xl font-bold py-10">Meet The Team</h1>
-        <div className="container grid grid-cols-3 gap-5">
-          {[
-            { name: "Shrivas Manglampalli", role: "CEO" },
-            { name: "Gurtej Bagga", role: "CTO" },
-            { name: "Sri Kotala", role: "Lead Software Developer" },
-            { name: "Amvi Dwivedi", role: "Marketer" },
-            { name: "Abhinav Jain", role: "Developer" },
-            { name: "Rhythm Chawla", role: "Developer" }
-          ].map((member, index) => (
-            <div key={index} className="team-column flex flex-col items-center">
-              <img className="rounded-full w-32 h-32" src="/images/bhasha.jpeg" alt={member.name} />
-              <p className="text-lg font-bold">{member.name}</p>
-              <p className="text-md">{member.role}</p>
-            </div>
-          ))}
-        </div>
+        <div className="container grid grid-cols-2 gap-5">
+        {[
+          { name: "Shrivas Manglampalli", role: "CEO", image: "/images/shrivas.jpeg" },
+          { name: "Gurtej Bagga", role: "CTO", image: "/images/gurtej.png" },
+          { name: "Abhinav Jain", role: "Developer",  image: "/images/abhi.png" }, // No image, will use default
+          { name: "Rhythm Chawla", role: "Developer", image: "/images/rhythm.JPG" }
+        ].map((member, index) => (
+          <div key={index} className="team-column flex flex-col items-center">
+            <img
+              className="rounded-full w-32 h-32 object-cover"
+              src={member.image || "/images/bhasha.jpeg"}
+              alt={member.name}
+            />
+            <p className="text-lg font-bold">{member.name}</p>
+            <p className="text-md">{member.role}</p>
+          </div>
+        ))}
+      </div>
+
       </section>
 
       <section className="bg-white">
@@ -170,9 +173,9 @@ export default function Index() {
             </Link>
           </div>
           <p className="text-sm mb-6">© 2025 Bhasha. All rights reserved.</p>
-          <Link href="/admin" className="bg-gray-400 text-white p-2 rounded-lg hover:bg-gray-700">
+          {/* <Link href="/admin" className="bg-gray-400 text-white p-2 rounded-lg hover:bg-gray-700">
             Admin
-          </Link>   
+          </Link>    */}
         </div>
       </section>
     
