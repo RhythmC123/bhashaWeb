@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import supabase from "../supabaseClient"; // Ensure this is the correct path to your Supabase client
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { InstagramIcon, TwitterIcon } from "lucide-react";
 import { Mail } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import NotifyMe from "@/components/NotifyMe";
+import Footer from "@/components/Footer";
 
 const animateTeam = dynamic(() =>
   import("../hooks/animateTeam").then((mod) => mod.animateTeam), { ssr: false }
 );
 
-const BigLogo = dynamic(() => import("./bigLogo"), { ssr: false });
+// Replace this line:
+// import BigLogo from "./bigLogo";
+
+const Logo3D = dynamic(() => import("../components/Logo3D"), { ssr: false });
 
 
 export default function Index() {
@@ -18,6 +24,11 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const notifyRef = useRef(null);
+
+  const handleScrollToNotify = () => {
+    notifyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   useEffect(() => {
   async function runAnimation() {
@@ -50,64 +61,63 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-[#e67732] text-white font-serif">
-      <header className="sticky z-50 top-0 w-full bg-[#cf9d72]">
-        <nav className="container mx-auto justify-between items-center py-6 px-4">
-          <div className="flex items-center gap-4">
-            <img className="bhashaicon w-15 h-15 rounded-full" src="/images/bhasha.jpeg" alt="bhasha" />
-            <Link href="/">
-              <span className="text-lg">Home</span>
-            </Link>
-            {/* <Link href="/admin">
-              <span className="text-lg">Admin</span>
-            </Link> */}
-          </div>
-        </nav>
-      </header>
+    <div className="min-h-screen bg-black text-white font-serif">
+      <Navbar />
 
       {/* Main content */}
-      <div className="mx-auto flex items-center justify-center p-10">
-        <div className="flex flex-col justify-center items-center">
-          <img className="bhashaicon" src="/images/bhasha.jpeg" alt="bhasha" />
-          <p className="text-4xl">
-            <span className="text-left">Bhasha</span>
+      <div className="min-h-screen bg-black flex flex-col md:flex-row items-center justify-center px-6 py-10 gap-10 md:gap-20">
+        {/* Left Side: Text */}
+        <div className="text-center md:text-left space-y-4 md:w-1/2">
+          <h1 className="text-[10rem] font-extrabold tracking-tight text-[#e67732]">
+            Bhasha
+          </h1>
+                          <div className="w-[70%] h-[2px] bg-green-500 mt-10 ml-0 md:ml-[15%]" />        
+
+          <p className="text-5xl text-white opacity-80 font-light">
+            Learn Indian Languages
           </p>
-          <p className="text-md">Learn Indian Languages</p>
+          <p className="text-5xl text-green-500 opacity-80 font-light">
+            Coming soon
+          </p>
+          
+          <button
+            onClick={handleScrollToNotify}
+            className="bg-white text-black p-4 rounded-lg hover:bg-black hover:text-white flex items-center gap-2 transition-all duration-300"
+          >
+            <Mail size={20} />
+            Notify Me
+          </button>
+        </div>
+
+        {/* Right Side: 3D Logo */}
+        <div className="w-full md:w-1/2 max-w-md p-6 bg-black rounded-xl shadow-2xl">
+          <Logo3D />
         </div>
       </div>
 
-      <div className="flex justify-center items-center mx-auto p-10">
-        <BigLogo />
-      </div>
-
-      <div className="flex justify-center items-center mx-auto p-20">
-        <button className="bg-white text-black p-4 rounded-lg hover:bg-black hover:text-white flex items-center gap-2">
-          <Mail size={20} /> Notify Me
-        </button>
-      </div>
-
-      <section className="w-full flex flex-col items-center p-10 bg-white">
-        <div className="w-full max-w-6xl text-left text-[#e67732]">
+      <section id="about" className="w-full flex justify-center bg-gray-200 py-16 relative overflow-hidden">
+        <div className="relative z-10 w-full max-w-6xl text-left text-[#e67732] px-4">
           <h1 className="text-5xl font-bold py-10">Who we are?</h1>
-          <p className="text-lg py-2">
+          <p className="text-lg py-2 text-black">
             Bhāsha was founded with the goal of making Indian language learning as simple as possible.
           </p>
-          <p className="text-lg py-2">
+          <p className="text-lg py-2 text-black">
             Currently, there are limited resources to learn Indian languages online, which are not customizable to a
             user’s personalized needs.
           </p>
-          <p className="text-lg py-2">
+          <p className="text-lg py-2 text-black">
             Our vision is to offer all of India’s major languages in one app, and to spearhead a movement to spread
             awareness on the beauty and rich history of Indian languages.
           </p>
-          <p className="text-lg py-2">Choose a language and we’ll take care of the rest.</p>
+          <p className="text-lg py-2 text-black">Choose a language and we’ll take care of the rest.</p>
 
-          <p className="text-2xl italic font-bold py-5">Join Us.</p>
+          <p className="text-2xl italic font-bold py-5 text-black">Join Us.</p>
         </div>
       </section>
 
 
-      <section className="container flex flex-col items-left mx-auto p-10">
+
+      <section id="team" className="container flex flex-col items-left mx-auto p-10">
         <h1 className="text-5xl font-bold py-10">Meet The Team</h1>
         <div className="container grid grid-cols-2 gap-5">
         {[
@@ -130,55 +140,12 @@ export default function Index() {
 
       </section>
 
-      <section className="bg-white">
-        <div className="container flex flex-col items-left mx-auto p-10">
-          <h1 className="text-4xl text-black font-bold py-10">Get Notified</h1>
-          {isSubmitted ? (
-            <p className="text-lg text-green-600">Thank you! You will be notified soon.</p>
-          ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-              <input
-                type="text"
-                placeholder="Name (eg. John Doe)..."
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="p-4 bg-gray-100 rounded-lg w-96"
-              />
-              <input
-                type="email"
-                placeholder="Email (eg.johndoe@abc.com)"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="p-4 bg-gray-100 rounded-lg w-96"
-              />
-              {error && <p className="text-red-600">{error}</p>}
-              <button className="bg-black text-white w-48 my-10 p-4 rounded-2xl hover:bg-gray-300 hover:text-black">
-                Notify Me
-              </button>
-            </form>
-          )}
+        <div ref={notifyRef}>
+          <NotifyMe />
         </div>
-      </section>
 
 
-      <section className="bg-black text-white p-10">
-        <div className="container mx-auto text-center p-10 mb-16">
-          <h1 className="text-4xl font-bold mb-6">Follow Us</h1>
-          <div className="flex justify-center gap-6 pb-6">
-            <Link href="https://www.instagram.com/learnwithbhasha?igsh=YjdhaHh4amU1YWdj" target="_blank">
-              <InstagramIcon size={32} />
-            </Link>
-            <Link href="" target="_blank">
-              <TwitterIcon size={32} />
-            </Link>
-          </div>
-          <p className="text-sm mb-6">© 2025 Bhasha. All rights reserved.</p>
-          {/* <Link href="/admin" className="bg-gray-400 text-white p-2 rounded-lg hover:bg-gray-700">
-            Admin
-          </Link>    */}
-        </div>
-      </section>
-    
+      <Footer />
       <div className="fixed bottom-0 right-0 p-4">
         
       </div>
