@@ -1,0 +1,35 @@
+/* components/AdminNav.module.css */
+.header {
+  background-color: #e67732;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.navLinks {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.navItem {
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navItem:hover {
+  color: black;
+}
+
+.logoImage {
+    width: 50px;
+}

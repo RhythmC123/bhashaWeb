@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import IndianFlag3D from "@/components/IndianFlag3D";
+import supabase from "@/supabaseClient";
 
 export default function NotifySection() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -9,22 +10,34 @@ export default function NotifySection() {
   const [animateBird, setAnimateBird] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !email) {
       setError("Please fill in both fields.");
       return;
     }
+
     setError("");
     setAnimateBird(true);
 
-    // Simulate delay for bird animation duration (3s)
+    // Insert into Supabase
+    const { data, error } = await supabase.from("subscribers").insert([{ name, email }]);
+
+    if (error) {
+      console.error("Supabase Error:", error.message);
+      setError("Something went wrong. Try again.");
+      setAnimateBird(false);
+      return;
+    }
+
+    // Proceed with animation
     setTimeout(() => {
       setIsSubmitted(true);
       setShowToast(true);
       setAnimateBird(false);
       setName("");
       setEmail("");
+
       // Hide toast after 3 seconds
       setTimeout(() => setShowToast(false), 3000);
     }, 3000);
@@ -40,7 +53,7 @@ export default function NotifySection() {
           {isSubmitted ? (
             <p className="text-lg text-green-600">Thank you! You will be notified soon.</p>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-black">
               <input
                 type="text"
                 placeholder="Name (eg. John Doe)..."
@@ -51,7 +64,7 @@ export default function NotifySection() {
               />
               <input
                 type="email"
-                placeholder="Email (eg.johndoe@abc.com)"
+                placeholder="Email (eg. johndoe@abc.com)"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="p-4 bg-gray-100 rounded-lg w-96"

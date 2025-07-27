@@ -117,27 +117,51 @@ export default function Index() {
 
 
 
-      <section id="team" className="container flex flex-col items-left mx-auto p-10">
-        <h1 className="text-5xl font-bold py-10">Meet The Team</h1>
-        <div className="container grid grid-cols-2 gap-5">
-        {[
-          { name: "Shrivas Manglampalli", role: "CEO", image: "/images/shrivas.jpeg" },
-          { name: "Gurtej Bagga", role: "CTO", image: "/images/gurtej.png" },
-          { name: "Abhinav Jain", role: "Developer",  image: "/images/abhi.png" }, // No image, will use default
-          { name: "Rhythm Chawla", role: "Developer", image: "/images/rhythm.JPG" }
-        ].map((member, index) => (
-          <div key={index} className="team-column flex flex-col items-center">
-            <img
-              className="rounded-full w-32 h-32 object-cover"
-              src={member.image || "/images/bhasha.jpeg"}
-              alt={member.name}
-            />
-            <p className="text-lg font-bold">{member.name}</p>
-            <p className="text-md">{member.role}</p>
-          </div>
-        ))}
-      </div>
-
+      <section id="team" className="fade-in-section container flex flex-col items-center mx-auto p-10">
+        <h1 className="text-5xl font-bold py-10 text-center">
+          Meet The Team
+        </h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10 justify-items-center">
+          {[
+            {
+              name: "Shrivas Manglampalli",
+              role: "CEO",
+              img: "/images/shrivas.jpeg",
+            },
+            {
+              name: "Gurtej Bagga",
+              role: "CTO",
+              img: "/images/gurtej.png",
+            },
+            {
+              name: "Rhythm Chawla",
+              role: "Software Developer",
+              img: "/images/rhythm.jpg",
+            },
+            {
+              name: "Abhinav Jain",
+              role: "Web Developer",
+              img: "/images/abhi.png",
+            },
+            {
+              name: "Amvi Dwivedi",
+              role: "Marketer",
+              img: "/images/amvi.png",
+            },
+          ].map((member, idx) => (
+            <div
+              key={idx}
+              className={`team-column flex flex-col items-center ${
+                idx === 4 ? "md:-translate-x+[30px]" : idx === 5 ? "md:translate-x-[30px]" : ""
+              }`}
+              data-index={idx % 3}
+            >
+              <img className="rounded-full w-32 h-32" src={member.img} alt={member.name} />
+              <p className="text-lg font-bold mt-4">{member.name}</p>
+              <p className="text-md">{member.role}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
         <div ref={notifyRef}>
