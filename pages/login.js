@@ -1,64 +1,67 @@
-// pages/login.js
 import { useState } from 'react'
-import supabase from '../supabaseClient'
-import styles from '../styles/Login.module.css' // Adjust the path as necessary
 import { useRouter } from 'next/router'
 
 export default function Login() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const router = useRouter()
-  
-    const handleLogin = async (e) => {
-      e.preventDefault()
-      console.log("Clicked login button")
-  
-      // Attempt to log in with email and password
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const hardcodedEmail = 'bhashaAdmin@bhashagroup.com'
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    if (loading) return
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: hardcodedEmail,
+          password,
+        }),
       })
-  
-      if (error) {
-        alert('Login failed: ' + error.message)
-      } else {
-        // Check if the user is logged in correctly
-        if (data.user) {
-            console.log('User logged in:', data.user)
-            if (data.user.role === 'authenticated') {
-              console.log('User is authenticated')
-              router.push('/admin') // Redirect to admin page after successful login
-              window.location.href = '/admin' // Redirect to admin page after successful login
-              console.log('Redirecting to admin page')
-            }
-        } else {
-          alert('Login failed: User data is not available')
-        }
-      }
+
+      const body = await res.json()
+      if (!res.ok) throw new Error(body.error || 'Login failed')
+
+      const to =
+        router.query.from && typeof router.query.from === 'string'
+          ? router.query.from
+          : '/admin'
+      router.push(to)
+    } catch (err) {
+      alert('❌ ' + err.message)
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
-  
-    return (
-      <div className={styles.loginContainer}>
-        <form onSubmit={handleLogin} className={styles.loginForm}>
-          <h2 className={styles.title}>Login</h2>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className={styles.input}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className={styles.input}
-          />
-          <button type="submit" className={styles.button}>Login</button>
-        </form>
-      </div>
-    )
   }
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '5rem' }}>
+      <form onSubmit={handleLogin} style={{ display: 'grid', gap: '1rem' }}>
+        <h2>Admin Login (Local)</h2>
+
+        <input type="text" value={hardcodedEmail} readOnly />
+
+        <input
+          type="password"
+          placeholder="Enter password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+
+        <p>
+            LearnWithBhasha123
+        </p>
+      </form>
+    </div>
+  )
+}

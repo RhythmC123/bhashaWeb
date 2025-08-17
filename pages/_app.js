@@ -1,5 +1,8 @@
-import "@/styles/globals.css";
-import Head from 'next/head';
+// pages/_app.js
+import { SessionContextProvider } from '@supabase/auth-helpers-react'
+import '@/styles/globals.css'
+import Head from 'next/head'
+import supabase from '@/supabaseClient'
 
 export default function App({ Component, pageProps }) {
   return (
@@ -7,7 +10,9 @@ export default function App({ Component, pageProps }) {
       <Head>
         <link rel="icon" href="/images/bhasha.jpeg" />
       </Head>
-      <Component {...pageProps} />
+      <SessionContextProvider supabaseClient={supabase} initialSession={pageProps.initialSession}>
+        <Component {...pageProps} />
+      </SessionContextProvider>
     </>
-  );
+  )
 }
