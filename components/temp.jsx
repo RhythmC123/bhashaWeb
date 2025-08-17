@@ -11,7 +11,7 @@ import {
 // Spinning 3D Logo Component
 function SpinningModel({ setCameraLog }) {
   const groupRef = useRef();
-  const { scene } = useGLTF("/models/fff.glb");
+  const { scene } = useGLTF("/models/FlLogo.glb");
 
   const controlsRef = useRef();
   const { camera, gl } = useThree();
@@ -37,7 +37,7 @@ function SpinningModel({ setCameraLog }) {
       <group ref={groupRef}>
         <primitive
           object={scene}
-          position={[0, 1, 0]}
+          position={[-22.25, 0, 0]}
           scale={[1.5, 1.5, 1.5]}
           castShadow
         />
