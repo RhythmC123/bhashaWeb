@@ -13,6 +13,7 @@ import Subscribers from '@/components/admin/Subscribers'
 import Website from '@/components/admin/Website'
 import ActivityLogs from '@/components/admin/ActivityLogs'
 import ContactRequests from '@/components/admin/ContactRequests'
+import QTPage from '@/components/admin/QTPage'
 
 function AdminPanel() {
   const session = useSession()
@@ -80,6 +81,8 @@ function AdminPanel() {
         return <Subscribers />
       case 'website':
         return <Website />
+      case 'question':
+        return <QTPage />
       case 'activity':
         return <ActivityLogs />
       case 'contact':

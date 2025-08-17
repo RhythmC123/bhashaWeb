@@ -1,6 +1,7 @@
 // components/SideBarAdmin.jsx
-import { LayoutDashboard, Users, Globe, Mail, Settings, Activity, Monitor } from 'lucide-react';
+import { LayoutDashboard, Users, Globe, Mail, Settings, Activity, Monitor, QrCode } from 'lucide-react';
 import styles from './Sidebar.module.css';
+import QTPage from './QTPage';
 
 const SideBarAdmin = ({ selectedSection, setSelectedSection }) => {
   const navItems = [
@@ -10,6 +11,7 @@ const SideBarAdmin = ({ selectedSection, setSelectedSection }) => {
     { label: 'Subscribers', key: 'subscribers', icon: <Users size={18} /> },
     { label: 'Contact Requests', key: 'contact', icon: <Mail size={18} /> },
     { label: 'Activity Logs', key: 'activity', icon: <Activity size={18} /> },
+    { label: 'Question templates', key: 'question', icon: <QrCode size={18} /> },
     { label: 'Settings', key: 'settings', icon: <Settings size={18} /> },
   ];
 
