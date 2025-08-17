@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.afacad {
+  font-family: "Afacad", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700; /* choose 400, 500, 600, 700 as you like */
+  font-style: normal;
+}
+
+
 :root {
   --background: #ffffff;
   --foreground: #171717;

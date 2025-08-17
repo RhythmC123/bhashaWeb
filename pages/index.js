@@ -68,7 +68,7 @@ export default function Index() {
       <div className="min-h-screen bg-black flex flex-col md:flex-row items-center justify-center px-6 py-10 gap-10 md:gap-20">
         {/* Left Side: Text */}
         <div className="text-center md:text-left space-y-4 md:w-1/2">
-          <h1 className="text-[10rem] font-extrabold tracking-tight text-[#e67732]">
+          <h1 className="text-[10rem] font-extrabold tracking-tight text-[#e67732] afacad">
             Bhasha
           </h1>
                           <div className="w-[70%] h-[2px] bg-green-500 mt-10 ml-0 md:ml-[15%]" />        
