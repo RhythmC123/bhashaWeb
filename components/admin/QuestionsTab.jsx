@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AddQuestion from "./AddQ";
+import supabase from "@/lib/supabaseClient";
 
 export default function QuestionsTab({
   selectedModule,
@@ -17,6 +18,48 @@ export default function QuestionsTab({
 }) {
   const [showAddQ, setShowAddQ] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingQuestion) return;
+
+    let imageUrl = editingQuestion.image || null;
+
+    // If a new image is selected, upload it
+    if (imageFile) {
+      const fileExt = imageFile.name.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const { data, error: uploadError } = await supabase.storage
+        .from("images")
+        .upload(fileName, imageFile);
+
+      if (uploadError) {
+        alert("❌ Image upload failed: " + uploadError.message);
+        return;
+      }
+
+      const { publicURL } = supabase.storage
+        .from("images")
+        .getPublicUrl(data.path);
+
+      imageUrl = publicURL;
+    }
+
+    // Call the original handleUpdateQuestion with updated image URL
+    handleUpdateQuestion({ ...editingQuestion, image: imageUrl });
+    setEditingQuestion(null);
+    setImageFile(null);
+    setPreviewUrl(null);
+  };
 
   return (
     <div>
@@ -47,8 +90,9 @@ export default function QuestionsTab({
             .map((q, idx) => (
               <Card key={idx} className="p-4 flex justify-between items-start">
                 {editingQuestion?.id === q.id ? (
-                  // ------------------ EDIT MODE ------------------
-                  <div className="w-full">
+                  <div className="w-full space-y-2">
+                    <p>Question</p>
+                    {/* Question */}
                     <Input
                       className="mb-2"
                       value={editingQuestion.question}
@@ -60,8 +104,11 @@ export default function QuestionsTab({
                       }
                     />
 
-                    {q.type === "mcq" && (
+                    {/* MCQ Options */}
+                    {(q.type === "mcq") && (
+                        
                       <div className="space-y-2">
+                        <p>Options</p>
                         {["o1", "o2", "o3", "o4"].map((key, i) => (
                           <Input
                             key={i}
@@ -75,6 +122,8 @@ export default function QuestionsTab({
                             }
                           />
                         ))}
+
+                        {/* Correct Answer */}
                         <p>Correct answer</p>
                         <Input
                           placeholder="Correct Answer"
@@ -86,9 +135,35 @@ export default function QuestionsTab({
                             })
                           }
                         />
+
+                        {/* Image Upload */}
+                        {q.type === "mcq" && (
+                          <div>
+                            <p className="mt-2 font-semibold">Question Image</p>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleImageChange}
+                            />
+                            {previewUrl ? (
+                              <img
+                                src={previewUrl}
+                                alt="Preview"
+                                className="mt-2 max-h-40"
+                              />
+                            ) : editingQuestion.image ? (
+                              <img
+                                src={editingQuestion.image}
+                                alt="Current"
+                                className="mt-2 max-h-40"
+                              />
+                            ) : <p>There is no image for this question</p>}
+                          </div>
+                        )}
                       </div>
                     )}
 
+                    {/* Fill in the Blank */}
                     {q.type === "fill_in_blank" && (
                       <Input
                         className="mt-2"
@@ -103,10 +178,11 @@ export default function QuestionsTab({
                       />
                     )}
 
+                    {/* Buttons */}
                     <div className="mt-4 flex gap-2 justify-end">
                       <Button
                         className="bg-green-600 hover:bg-green-700"
-                        onClick={() => handleUpdateQuestion(editingQuestion)}
+                        onClick={handleSaveEdit}
                       >
                         💾 Save
                       </Button>
@@ -119,15 +195,15 @@ export default function QuestionsTab({
                     </div>
                   </div>
                 ) : (
-                  // ------------------ VIEW MODE ------------------
                   <>
+                    {/* View Mode */}
                     <div className="flex-1">
                       <h3 className="font-semibold">
                         Q{idx + 1} ({q.type})
                       </h3>
                       <p className="text-gray-700 mt-2">{q.question}</p>
 
-                      {q.type === "mcq" && (
+                      {(q.type === "mcq" || q.type === "mcq_image") && (
                         <ul className="list-disc ml-6 mt-2">
                           {["o1", "o2", "o3", "o4"].map(
                             (key, i) => q[key] && <li key={i}>{q[key]}</li>
@@ -135,12 +211,20 @@ export default function QuestionsTab({
                         </ul>
                       )}
 
+                      {q.type === "mcq_image" && q.image && (
+                        <img
+                          src={q.image}
+                          alt="Question"
+                          className="mt-2 max-h-40"
+                        />
+                      )}
+
                       <p className="text-sm text-green-700 mt-2">
                         ✅ Correct Answer: {q.correct}
                       </p>
                     </div>
 
-                    {/* Buttons aligned right */}
+                    {/* Buttons */}
                     <div className="flex flex-col gap-2 ml-4">
                       <Button
                         className="bg-yellow-500 hover:bg-yellow-600"
