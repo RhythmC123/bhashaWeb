@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import supabase from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
@@ -16,16 +18,47 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
     o4: "",
     correct: "",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let error = null;
+    let imageUrl = null;
 
-    if (type === "mcq") {
+    // Upload image if present
+    if (imageFile) {
+      const fileExt = imageFile.name.split(".").pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const { data, error: uploadError } = await supabase.storage
+        .from("mcq-images") // make sure you created this bucket
+        .upload(fileName, imageFile);
+
+      if (uploadError) {
+        alert("❌ Image upload failed: " + uploadError.message);
+        return;
+      }
+
+      const { publicURL } = supabase.storage
+        .from("mcq-images")
+        .getPublicUrl(data.path);
+
+      imageUrl = publicURL;
+    }
+
+    if (type === "mcq" || type === "mcq_image") {
       const { error: mcqError } = await supabase.from("mcq").insert([
         {
           question: form.question,
@@ -36,12 +69,12 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
           correct: form.correct,
           module_id: Number(moduleId),
           language_id: Number(languageId),
-          type: "mcq",
+          type: type,
+          image: imageUrl,
         },
       ]);
       error = mcqError;
-    } 
-    else if (type === "fill_in_blank") {
+    } else if (type === "fill_in_blank") {
       const { error: fibError } = await supabase.from("fillblank").insert([
         {
           question: form.question,
@@ -51,14 +84,11 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
         },
       ]);
       error = fibError;
-    } 
-    else if (type === "multi") {
-      // Correct answers comma-separated, split into array
+    } else if (type === "multi") {
       const correctAnswers = form.correct
         .split(",")
         .map((c) => c.trim())
         .filter((c) => c !== "");
-
       const { error: multiError } = await supabase.from("multi").insert([
         {
           question: form.question,
@@ -78,6 +108,9 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
       alert("❌ Failed: " + error.message);
     } else {
       alert("✅ Question added!");
+      setForm({ question: "", o1: "", o2: "", o3: "", o4: "", correct: "" });
+      setImageFile(null);
+      setPreviewUrl(null);
       if (onDone) onDone();
     }
   };
@@ -97,6 +130,7 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
               className="w-full border rounded p-2 text-black"
             >
               <option value="mcq">MCQ</option>
+              <option value="mcq_image">MCQ with Image</option>
               <option value="fill_in_blank">Fill in the Blank</option>
               <option value="multi">Multiple Correct</option>
             </select>
@@ -115,8 +149,19 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
             />
           </div>
 
+          {/* Image Upload */}
+          {type === "mcq_image" && (
+            <div>
+              <Label>Question Image</Label>
+              <Input type="file" accept="image/*" onChange={handleImageChange} />
+              {previewUrl && (
+                <img src={previewUrl} alt="Preview" className="mt-2 max-h-40" />
+              )}
+            </div>
+          )}
+
           {/* MCQ + Multi Fields */}
-          {(type === "mcq" || type === "multi") && (
+          {(type === "mcq" || type === "mcq_image" || type === "multi") && (
             <>
               {["o1", "o2", "o3", "o4"].map((opt, idx) => (
                 <div key={idx}>
