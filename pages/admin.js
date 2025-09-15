@@ -14,6 +14,8 @@ import Website from '@/components/admin/Website'
 import ActivityLogs from '@/components/admin/ActivityLogs'
 import ContactRequests from '@/components/admin/ContactRequests'
 import QTPage from '@/components/admin/QTPage'
+import Settings from '@/components/admin/Settings'
+import Stories from '@/components/admin/Stories'
 
 function AdminPanel() {
   const session = useSession()
@@ -54,6 +56,7 @@ function AdminPanel() {
     const courseSections = ['courses']
     if (!courseSections.includes(selectedSection)) {
       setBreadcrumb([])
+      setSelectedModule(null)
     }
   }, [selectedSection])
 
@@ -89,6 +92,8 @@ function AdminPanel() {
         return <ActivityLogs />
       case 'contact':
         return <ContactRequests />
+      case 'settings':
+        return <Settings />
       default:
         return (
           <div className={styles.mainText}>
@@ -153,16 +158,16 @@ function AdminPanel() {
 
         {/* Breadcrumb */}
         {breadcrumb.length > 0 && (
-          <div className="mb-4 text-gray-700 flex items-center gap-1">
+          <div className="mb-4 text-gray-300 flex items-center gap-1">
             {breadcrumb.map((item, idx) => (
               <span key={idx} className="flex items-center gap-1">
                 <button
                   onClick={item.onClick}
-                  className="text-blue-600 hover:underline"
+                  className="text-orange-400 hover:text-orange-300 hover:underline"
                 >
                   {item.name}
                 </button>
-                {idx < breadcrumb.length - 1 && <span>/</span>}
+                {idx < breadcrumb.length - 1 && <span className="text-gray-500">/</span>}
               </span>
             ))}
           </div>

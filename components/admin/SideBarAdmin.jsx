@@ -1,5 +1,5 @@
 // components/SideBarAdmin.jsx
-import { LayoutDashboard, Users, Globe, Mail, Settings, Activity, Monitor, QrCode } from 'lucide-react';
+import { LayoutDashboard, Users, Globe, Mail, Settings, Activity, Monitor, QrCode, BookOpen } from 'lucide-react';
 import styles from './Sidebar.module.css';
 import QTPage from './QTPage';
 

@@ -9,6 +9,7 @@
   position: sticky;
   top: 64px;
   overflow-y: auto;
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
 }
 
 .title {

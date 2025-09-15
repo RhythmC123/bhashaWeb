@@ -12,6 +12,7 @@
 .contentWrapper {
   display: flex;
   flex: 1;
+  min-height: calc(100vh - 64px); /* Account for navbar height */
   overflow: hidden;
 }
 
@@ -21,6 +22,8 @@
   background-color: #1e1e1e;
   overflow-y: auto;
   gap: 1rem;
+  min-height: calc(100vh - 64px); /* Match sidebar height */
+  max-height: calc(100vh - 64px); /* Prevent content from exceeding viewport */
 }
 
 .mainText {

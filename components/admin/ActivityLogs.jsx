@@ -39,7 +39,7 @@ function ActivityLogs() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10 text-white">
         <Card className="bg-[#1a1a1a] rounded-2xl shadow-lg">
           <CardContent className="p-6 flex items-center space-x-4">
-            <Users className="text-blue-400" size={36} />
+            <Users className="text-orange-400" size={36} />
             <div>
               <p className="text-gray-400 text-sm">Total Visitors</p>
               <h2 className="text-2xl font-bold">12,345</h2>
@@ -81,7 +81,7 @@ function ActivityLogs() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         <Card className="bg-[#1a1a1a] rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Visitors by Country</h2>
+          <h2 className="text-xl font-semibold mb-4 text-white">Visitors by Country</h2>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
@@ -102,7 +102,7 @@ function ActivityLogs() {
         </Card>
 
         <Card className="bg-[#1a1a1a] rounded-2xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Weekly Visit Trends</h2>
+          <h2 className="text-xl font-semibold mb-4 text-white">Weekly Visit Trends</h2>
           <ResponsiveContainer width="100%" height={250}>
             <LineChart data={activityTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
@@ -116,23 +116,23 @@ function ActivityLogs() {
       </div>
 
       {/* Recent Activity Logs */}
-      <Card className="bg-[#1a1a1a] rounded-2xl shadow-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Recent User Activity</h2>
-        <div className="space-y-4">
-          {logs.map((log) => (
-            <div
-              key={log.id}
-              className="flex items-center justify-between border-b border-gray-700 pb-2"
-            >
-              <div>
-                <p className="font-semibold text-white">{log.user}</p>
-                <p className="text-gray-400 text-sm">{log.action}</p>
+        <Card className="bg-[#1a1a1a] rounded-2xl shadow-lg p-6">
+          <h2 className="text-xl font-semibold mb-4 text-white">Recent User Activity</h2>
+          <div className="space-y-4">
+            {logs.map((log) => (
+              <div
+                key={log.id}
+                className="flex items-center justify-between border-b border-gray-600 pb-3"
+              >
+                <div>
+                  <p className="font-semibold text-white text-base">{log.user}</p>
+                  <p className="text-gray-300 text-sm font-medium">{log.action}</p>
+                </div>
+                <span className="text-gray-400 text-sm font-medium">{log.time}</span>
               </div>
-              <span className="text-gray-500 text-sm">{log.time}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
+            ))}
+          </div>
+        </Card>
     </div>
   );
 }
