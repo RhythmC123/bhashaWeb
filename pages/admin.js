@@ -35,27 +35,27 @@ function AdminPanel() {
       crumbs.push({
         name: selectedLanguage.name,
         onClick: () => {
-          setSelectedModule(null)
           setSelectedSection('courses')
-          setBreadcrumb([{ name: selectedLanguage.name, onClick: () => {
-            setSelectedSection('languages')
-            setSelectedLanguage(null)
-            setSelectedModule(null)
-            setBreadcrumb([])
-          }}])
+          setSelectedModule(null)
         }
       })
     }
     if (selectedModule) {
       crumbs.push({
         name: selectedModule.title,
-        onClick: () => {
-          // stay in module, could later open module detail page
-        }
+        onClick: () => {}
       })
     }
     setBreadcrumb(crumbs)
-  }, [selectedLanguage, selectedModule])
+  }, [selectedLanguage, selectedModule, selectedSection])
+
+  // Clear breadcrumbs when switching away from course-related sections
+  useEffect(() => {
+    const courseSections = ['courses']
+    if (!courseSections.includes(selectedSection)) {
+      setBreadcrumb([])
+    }
+  }, [selectedSection])
 
   const renderContent = () => {
     switch (selectedSection) {
@@ -63,6 +63,8 @@ function AdminPanel() {
         return (
           <Courses
             language={selectedLanguage}
+            selectedModule={selectedModule}
+            setSelectedModule={setSelectedModule}
             setSelectedLanguage={setSelectedLanguage}
             setSelectedSection={setSelectedSection}
             setBreadcrumb={setBreadcrumb}

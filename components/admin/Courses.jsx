@@ -12,6 +12,8 @@ import Examples from "./Examples";
 
 export default function Courses({
   language,
+  selectedModule,
+  setSelectedModule,
   setBreadcrumb,
   setSelectedSection,
   setSelectedLanguage,
@@ -19,7 +21,7 @@ export default function Courses({
   const [modules, setModules] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [adding, setAdding] = useState(false);
-  const [selectedModule, setSelectedModule] = useState(null);
+  // selectedModule is lifted to parent to power breadcrumbs
   const [questions, setQuestions] = useState([]);
   const [filterType, setFilterType] = useState("all");
   const [loading, setLoading] = useState(false);

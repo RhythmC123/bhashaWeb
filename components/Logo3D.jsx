@@ -61,42 +61,57 @@ export default function Logo3D() {
   const [cameraLog, setCameraLog] = useState("");
 
   return (
-    <div style={{ position: "relative", width: 500, height: 500 }}>
+    <div className="w-full h-full">
       <Canvas
         shadows
         camera={{ position: [-1.24, 1.31, 9.54], fov: 10 }}
         gl={{ physicallyCorrectLights: true }}
+        className="w-full h-full"
       >
-        {/* Three-point light setup */}
+        {/* Enhanced lighting setup for better visual appeal */}
         <directionalLight
           position={[5, 10, 5]}
-          intensity={1.5}
+          intensity={2.0}
           castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          color="#ff8c42"
         />
-        <ambientLight intensity={0.4} />
+        <directionalLight
+          position={[-5, 8, -5]}
+          intensity={1.2}
+          color="#ff6b35"
+        />
+        <ambientLight intensity={0.6} color="#fff4e6" />
         <spotLight
           position={[-10, 15, 10]}
-          angle={0.3}
-          penumbra={1}
-          intensity={1}
+          angle={0.4}
+          penumbra={0.8}
+          intensity={1.5}
           castShadow
+          color="#ff9f4a"
         />
-        <pointLight position={[0, 5, -10]} intensity={0.4} />
+        <pointLight position={[0, 5, -10]} intensity={0.8} color="#ffa726" />
+        <pointLight position={[8, 3, 8]} intensity={0.6} color="#ffb74d" />
+        <hemisphereLight
+          skyColor="#ff8c42"
+          groundColor="#ff6b35"
+          intensity={0.3}
+        />
 
         {/* 3D Model */}
         <Suspense fallback={null}>
           <SpinningModel setCameraLog={setCameraLog} />
         </Suspense>
 
-        {/* Contact shadows under model */}
+        {/* Enhanced contact shadows under model */}
         <ContactShadows
           position={[0, -0.8, 0]}
-          opacity={0.5}
+          opacity={0.6}
           scale={50}
-          blur={1.5}
+          blur={2}
           far={10}
+          color="#ff6b35"
         />
       </Canvas>
 
