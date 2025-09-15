@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import IndianFlag3D from "@/components/IndianFlag3D";
-import supabase from "@/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 
 export default function NotifySection() {
   const [isSubmitted, setIsSubmitted] = useState(false);

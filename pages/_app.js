@@ -2,7 +2,7 @@
 import { SessionContextProvider } from '@supabase/auth-helpers-react'
 import '@/styles/globals.css'
 import Head from 'next/head'
-import supabase from '@/supabaseClient'
+import supabase from '@/lib/supabaseClient'
 
 export default function App({ Component, pageProps }) {
   return (
