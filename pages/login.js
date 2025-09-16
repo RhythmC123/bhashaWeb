@@ -9,41 +9,20 @@ export default function Login() {
 
   const hardcodedEmail = 'bhashaAdmin@bhashagroup.com'
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault()
     if (loading) return
     setLoading(true)
 
-    try {
-      // Create form data for server-side redirect
-      const formData = new FormData()
-      formData.append('email', hardcodedEmail)
-      formData.append('password', password)
-      
-      // Add redirect parameter if present
-      if (router.query.from) {
-        formData.append('from', router.query.from)
-      }
-
-      // Submit form to API endpoint which will handle redirect
-      const form = document.createElement('form')
-      form.method = 'POST'
-      form.action = '/api/login'
-      
-      // Add form data as hidden inputs
-      for (const [key, value] of formData.entries()) {
-        const input = document.createElement('input')
-        input.type = 'hidden'
-        input.name = key
-        input.value = value
-        form.appendChild(input)
-      }
-      
-      document.body.appendChild(form)
-      form.submit()
-    } catch (err) {
-      alert('❌ ' + err.message)
-      console.error(err)
+    // Simple password check - no API calls needed
+    if (password === 'LearnWithBhasha123') {
+      // Direct redirect to admin
+      const to = router.query.from && typeof router.query.from === 'string' 
+        ? router.query.from 
+        : '/admin'
+      window.location.href = to
+    } else {
+      alert('❌ Invalid password')
       setLoading(false)
     }
   }
