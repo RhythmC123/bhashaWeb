@@ -15,6 +15,7 @@ import ContactRequests from '@/components/admin/ContactRequests'
 import QTPage from '@/components/admin/QTPage'
 import Settings from '@/components/admin/Settings'
 import Stories from '@/components/admin/Stories'
+import AdminMap from '@/components/admin/Map'
 
 function AdminPanel() {
   const [selectedSection, setSelectedSection] = useState('dashboard')
@@ -76,6 +77,8 @@ function AdminPanel() {
             }}
           />
         )
+      case 'map':
+        return <AdminMap />
       case 'subscribers':
         return <Subscribers />
       case 'website':
