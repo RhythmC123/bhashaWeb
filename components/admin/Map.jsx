@@ -16,19 +16,19 @@ function IndiaModel({ onModelClick }) {
 
 export default function AdminMap() {
   const [isOpen, setIsOpen] = useState(false);
-  const [langCount, setLangCount] = useState(null);
+  const [languages, setLanguages] = useState([]);
 
   const handleModelClick = useCallback(async () => {
     try {
-      // Efficient count-only query
-      const { count, error } = await supabase
+      const { data, error } = await supabase
         .from("languages")
-        .select("*", { count: "exact", head: true });
+        .select("id, name")
+        .order("id", { ascending: true });
       if (error) throw error;
-      setLangCount(count ?? 0);
+      setLanguages(data || []);
     } catch (e) {
-      console.error("Failed to fetch languages count", e);
-      setLangCount(0);
+      console.error("Failed to fetch languages", e);
+      setLanguages([]);
     } finally {
       setIsOpen(true);
     }
@@ -74,7 +74,6 @@ export default function AdminMap() {
           <IndiaModel onModelClick={handleModelClick} />
         </Suspense>
         <OrbitControls enableDamping makeDefault target={[0.137, -0.0663, 0.419]} />
-        <CameraHud />
       </Canvas>
 
       {isOpen && (
@@ -131,7 +130,7 @@ export default function AdminMap() {
                 borderBottom: "2px solid #e8e1d7",
                 paddingBottom: 10,
               }}>
-                Bhasha Gazette
+                Languages Ledger
               </h3>
               <div style={{ display: "flex", gap: 16, marginTop: 14 }}>
                 <div style={{ flex: 1 }}>
@@ -141,13 +140,26 @@ export default function AdminMap() {
                     borderLeft: "3px solid #d0c6b8",
                     paddingLeft: 10,
                   }}>
-                    <strong style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace" }}>
-                      You have added {langCount ?? '...'} languages so far!
-                    </strong>
-                    <p style={{ marginTop: 8 }}>
-                      A fresh pin marks today’s milestone on the linguistic map. Keep
-                      expanding your archive—new scripts await discovery.
-                    </p>
+                    {(languages && languages.length > 0) ? (
+                      <div>
+                        {languages.map((l) => (
+                          <div key={l.id} style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "8px 10px",
+                            borderBottom: "1px dashed #dccfbd",
+                            background: "#fbf8f2",
+                            marginBottom: 6,
+                          }}>
+                            <span style={{ fontWeight: 600 }}>{l.name}</span>
+                            <span style={{ fontSize: 12, color: "#8a806f" }}>ID #{l.id}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p style={{ margin: 0, color: "#6b6253" }}>No languages found.</p>
+                    )}
                   </div>
                 </div>
               </div>
