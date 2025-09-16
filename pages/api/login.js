@@ -40,14 +40,27 @@ export default function handler(req, res) {
   // Very simple token for local/dev only
   const token = 'ok'
 
-  res.setHeader('Set-Cookie', serialize(COOKIE_NAME, token, {
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 8, // 8 hours
-    domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost'
-  }))
+  }
+
+  // Don't set domain in production to avoid issues
+  if (process.env.NODE_ENV !== 'production') {
+    cookieOptions.domain = 'localhost'
+  }
+
+  res.setHeader('Set-Cookie', serialize(COOKIE_NAME, token, cookieOptions))
+  
+  console.log('Cookie set with options:', {
+    name: COOKIE_NAME,
+    value: token,
+    options: cookieOptions,
+    nodeEnv: process.env.NODE_ENV
+  })
 
   console.log('Login successful, cookie set:', COOKIE_NAME)
   return res.status(200).json({ success: true })
