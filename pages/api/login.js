@@ -63,5 +63,15 @@ export default function handler(req, res) {
   })
 
   console.log('Login successful, cookie set:', COOKIE_NAME)
-  return res.status(200).json({ success: true })
+  
+  // Get redirect URL from query params or default to /admin
+  const { from } = req.query
+  const redirectUrl = from && typeof from === 'string' ? from : '/admin'
+  
+  // Use server-side redirect to ensure cookie is set before navigation
+  res.writeHead(302, {
+    'Location': redirectUrl,
+    'Set-Cookie': serialize(COOKIE_NAME, token, cookieOptions)
+  })
+  res.end()
 }

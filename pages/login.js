@@ -15,27 +15,35 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: hardcodedEmail, password }),
-      })
+      // Create form data for server-side redirect
+      const formData = new FormData()
+      formData.append('email', hardcodedEmail)
+      formData.append('password', password)
+      
+      // Add redirect parameter if present
+      if (router.query.from) {
+        formData.append('from', router.query.from)
+      }
 
-      const body = await res.json()
-      if (!res.ok) throw new Error(body.error || 'Login failed')
-
-      // Wait a moment for cookie to be set, then redirect
-      setTimeout(() => {
-        const to =
-          router.query.from && typeof router.query.from === 'string'
-            ? router.query.from
-            : '/admin'
-        window.location.href = to
-      }, 100)
+      // Submit form to API endpoint which will handle redirect
+      const form = document.createElement('form')
+      form.method = 'POST'
+      form.action = '/api/login'
+      
+      // Add form data as hidden inputs
+      for (const [key, value] of formData.entries()) {
+        const input = document.createElement('input')
+        input.type = 'hidden'
+        input.name = key
+        input.value = value
+        form.appendChild(input)
+      }
+      
+      document.body.appendChild(form)
+      form.submit()
     } catch (err) {
       alert('❌ ' + err.message)
       console.error(err)
-    } finally {
       setLoading(false)
     }
   }
