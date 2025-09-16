@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from '../styles/Admin.module.css'
 
-import { useSession } from '@supabase/auth-helpers-react'
-import { useRouter } from 'next/router'
+// auth removed for now
 
 import AdminNav from '@/components/admin/AdminNav'
 import SideBarAdmin from '@/components/admin/SideBarAdmin'
@@ -18,17 +17,12 @@ import Settings from '@/components/admin/Settings'
 import Stories from '@/components/admin/Stories'
 
 function AdminPanel() {
-  const session = useSession()
-  const router = useRouter()
   const [selectedSection, setSelectedSection] = useState('dashboard')
   const [selectedLanguage, setSelectedLanguage] = useState(null)
   const [selectedModule, setSelectedModule] = useState(null)
   const [breadcrumb, setBreadcrumb] = useState([])
 
-  // Redirect if no session
-  useEffect(() => {
-    if (session === null) router.push('/login')
-  }, [session])
+  // No auth: allow direct access to admin
 
   // Update breadcrumb whenever selection changes
   useEffect(() => {
@@ -142,7 +136,7 @@ function AdminPanel() {
     }
   }
 
-  if (session === undefined) return <p>Loading...</p>
+  // No auth loading state
 
   return (
     <div className={styles.container}>
