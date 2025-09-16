@@ -63,8 +63,10 @@ export default function Login() {
           </h2>
 
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-orange-100">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-orange-100">Email</label>
             <input
+              id="email"
+              name="email"
               type="text"
               value={hardcodedEmail}
               readOnly
@@ -74,10 +76,12 @@ export default function Login() {
 
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label className="block text-sm font-medium text-orange-100">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-orange-100">Password</label>
               <span className="text-xs text-orange-200/70">Admin only</span>
             </div>
             <input
+              id="password"
+              name="password"
               type="password"
               placeholder="Enter password"
               value={password}
