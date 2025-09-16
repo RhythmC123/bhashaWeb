@@ -46,6 +46,7 @@ export default function handler(req, res) {
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 8, // 8 hours
+    domain: process.env.NODE_ENV === 'production' ? undefined : 'localhost'
   }))
 
   console.log('Login successful, cookie set:', COOKIE_NAME)

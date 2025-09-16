@@ -24,11 +24,14 @@ export default function Login() {
       const body = await res.json()
       if (!res.ok) throw new Error(body.error || 'Login failed')
 
-      const to =
-        router.query.from && typeof router.query.from === 'string'
-          ? router.query.from
-          : '/admin'
-      router.push(to)
+      // Wait a moment for cookie to be set, then redirect
+      setTimeout(() => {
+        const to =
+          router.query.from && typeof router.query.from === 'string'
+            ? router.query.from
+            : '/admin'
+        window.location.href = to
+      }, 100)
     } catch (err) {
       alert('❌ ' + err.message)
       console.error(err)
@@ -70,6 +73,7 @@ export default function Login() {
               type="text"
               value={hardcodedEmail}
               readOnly
+              autoComplete="email"
               className="w-full rounded-xl px-4 py-3 text-white bg-white/10 border border-white/10 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange-400/60 focus:border-transparent"
             />
           </div>
@@ -87,6 +91,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
               className="w-full rounded-xl px-4 py-3 text-white bg-white/10 border border-white/10 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange-400/60 focus:border-transparent"
             />
           </div>
