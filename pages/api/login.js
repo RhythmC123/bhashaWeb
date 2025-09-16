@@ -11,11 +11,29 @@ export default function handler(req, res) {
   const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
   const COOKIE_NAME = process.env.AUTH_COOKIE_NAME || 'bhasha_admin'
 
+  // Debug logging (remove in production)
+  console.log('Login attempt:', {
+    email: email,
+    passwordLength: password?.length,
+    adminEmail: ADMIN_EMAIL,
+    adminPasswordLength: ADMIN_PASSWORD?.length,
+    cookieName: COOKIE_NAME,
+    nodeEnv: process.env.NODE_ENV
+  })
+
   if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
+    console.error('Missing environment variables:', {
+      hasAdminEmail: !!ADMIN_EMAIL,
+      hasAdminPassword: !!ADMIN_PASSWORD
+    })
     return res.status(500).json({ error: 'Server not configured' })
   }
 
   if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+    console.log('Invalid credentials:', {
+      emailMatch: email === ADMIN_EMAIL,
+      passwordMatch: password === ADMIN_PASSWORD
+    })
     return res.status(401).json({ error: 'Invalid credentials' })
   }
 
@@ -30,5 +48,6 @@ export default function handler(req, res) {
     maxAge: 60 * 60 * 8, // 8 hours
   }))
 
+  console.log('Login successful, cookie set:', COOKIE_NAME)
   return res.status(200).json({ success: true })
 }

@@ -6,6 +6,14 @@ export function middleware(req) {
   const token = req.cookies.get(COOKIE_NAME)?.value
   const { pathname } = req.nextUrl
 
+  // Debug logging (remove in production)
+  console.log('Middleware check:', {
+    pathname,
+    cookieName: COOKIE_NAME,
+    token: token,
+    allCookies: Object.fromEntries(req.cookies.getAll().map(c => [c.name, c.value]))
+  })
+
   // Allow the login page and API routes
   if (pathname.startsWith('/api')) return NextResponse.next()
   if (pathname.startsWith('/login')) return NextResponse.next()
@@ -16,7 +24,11 @@ export function middleware(req) {
 
   // Protect /admin
   if (pathname.startsWith('/admin')) {
-    if (token === 'ok') return NextResponse.next()
+    if (token === 'ok') {
+      console.log('Admin access granted')
+      return NextResponse.next()
+    }
+    console.log('Admin access denied, redirecting to login')
     const url = req.nextUrl.clone()
     url.pathname = '/login'
     url.searchParams.set('from', pathname)
