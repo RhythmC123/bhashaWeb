@@ -9,6 +9,10 @@ export function middleware(req) {
   // Allow the login page and API routes
   if (pathname.startsWith('/api')) return NextResponse.next()
   if (pathname.startsWith('/login')) return NextResponse.next()
+  if (pathname.startsWith('/_next')) return NextResponse.next()
+  if (pathname.startsWith('/static')) return NextResponse.next()
+  if (pathname.startsWith('/images')) return NextResponse.next()
+  if (pathname.startsWith('/models')) return NextResponse.next()
 
   // Protect /admin
   if (pathname.startsWith('/admin')) {
@@ -23,5 +27,5 @@ export function middleware(req) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/login', '/api/:path*', '/((?!_next|static|images).*)'],
+  matcher: ['/admin/:path*', '/login'],
 }
