@@ -2,7 +2,7 @@
 
 import React, { Suspense, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { OrbitControls, useGLTF, Html } from "@react-three/drei";
 
 function IndiaModel() {
   const gltf = useGLTF("/models/india.glb");
@@ -11,7 +11,8 @@ function IndiaModel() {
 
 export default function AdminMap() {
   function CameraHud() {
-    const { camera, controls } = useThree();
+    const camera = useThree((s) => s.camera);
+    const controls = useThree((s) => s.controls);
     const [pos, setPos] = useState([0, 0, 0]);
     const [target, setTarget] = useState([0, 0, 0]);
     useFrame(() => {
@@ -21,20 +22,22 @@ export default function AdminMap() {
       setTarget([Number(t.x?.toFixed?.(3) || 0), Number(t.y?.toFixed?.(3) || 0), Number(t.z?.toFixed?.(3) || 0)]);
     });
     return (
-      <div style={{
-        position: "absolute",
-        top: 8,
-        left: 8,
-        padding: "6px 10px",
-        background: "rgba(0,0,0,0.6)",
-        color: "#fff",
-        fontSize: 12,
-        borderRadius: 8,
-        fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
-      }}>
-        <div>cam: [{pos.join(", ")}]</div>
-        <div>target: [{target.join(", ")}]</div>
-      </div>
+      <Html prepend style={{ pointerEvents: "none" }}>
+        <div style={{
+          position: "fixed",
+          top: 8,
+          left: 8,
+          padding: "6px 10px",
+          background: "rgba(0,0,0,0.6)",
+          color: "#fff",
+          fontSize: 12,
+          borderRadius: 8,
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+        }}>
+          <div>cam: [{pos.join(", ")}]</div>
+          <div>target: [{target.join(", ")}]</div>
+        </div>
+      </Html>
     );
   }
 
@@ -47,8 +50,8 @@ export default function AdminMap() {
           <IndiaModel />
         </Suspense>
         <OrbitControls enableDamping makeDefault />
+        <CameraHud />
       </Canvas>
-      <CameraHud />
     </div>
   );
 }
