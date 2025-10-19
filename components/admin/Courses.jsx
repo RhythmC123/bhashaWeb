@@ -83,6 +83,16 @@ export default function Courses({
     else setModules(data);
   };
 
+  // Compute the next module number for the current language
+  const getNextModuleNumber = () => {
+    if (!modules || modules.length === 0) return 1;
+    const existingNumbers = modules
+      .map((m) => Number(m.module_number) || 0)
+      .filter((n) => Number.isFinite(n));
+    const maxNum = existingNumbers.length ? Math.max(...existingNumbers) : 0;
+    return maxNum + 1;
+  };
+
   // Add a new module
   const handleAddModule = async (e) => {
     e.preventDefault();
@@ -91,11 +101,16 @@ export default function Courses({
       return;
     }
 
+    // Auto-assign module_number if not provided
+    const finalModuleNumber = newModule.module_number
+      ? Number(newModule.module_number)
+      : getNextModuleNumber();
+
     const { error } = await supabase.from("modules").insert([
       {
         ...newModule,
         language_id: Number(newModule.language_id),
-        module_number: Number(newModule.module_number),
+        module_number: Number(finalModuleNumber),
       },
     ]);
 
@@ -113,6 +128,35 @@ export default function Courses({
       fetchModules(language.id);
       setAdding(false);
     }
+  };
+
+  // Sync module_number to equal the module id (ensures stable order by ID)
+  const handleSyncModuleNumbers = async () => {
+    if (!language?.id) return;
+    const { data: mods, error } = await supabase
+      .from("modules")
+      .select("id")
+      .eq("language_id", Number(language.id))
+      .order("id", { ascending: true });
+    if (error) {
+      console.error(error);
+      alert("Failed to fetch modules for sync");
+      return;
+    }
+    // Update each module's module_number to equal its id
+    for (const m of mods || []) {
+      const { error: upErr } = await supabase
+        .from("modules")
+        .update({ module_number: m.id })
+        .eq("id", m.id);
+      if (upErr) {
+        console.error(upErr);
+        alert("Failed during sync at module id " + m.id);
+        return;
+      }
+    }
+    await fetchModules(language.id);
+    alert("✅ Module numbers synced to match module IDs");
   };
 
   // Delete a question
@@ -175,6 +219,20 @@ export default function Courses({
     if (mcqError) console.error(mcqError);
     else results.push(...mcq.map((q) => ({ ...q, type: "mcq" })));
 
+    // Multi-correct questions (optional table)
+    try {
+      const { data: multi, error: multiError } = await supabase
+        .from("multi")
+        .select("*")
+        .eq("module_id", module.id)
+        .eq("language_id", module.language_id);
+      if (!multiError && multi) {
+        results.push(...multi.map((q) => ({ ...q, type: "multi" })));
+      }
+    } catch (e) {
+      // table may not exist; ignore
+    }
+
     setQuestions(results);
   };
 
@@ -231,13 +289,28 @@ export default function Courses({
           </div>
           
           {!selectedModule && (
-            <Button
-              onClick={() => setAdding(true)}
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-            >
-              <Plus size={20} className="mr-2" />
-              Add Module
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button
+                onClick={handleSyncModuleNumbers}
+                variant="outline"
+                className="border-gray-600 text-gray-300 hover:bg-gray-700 rounded-xl"
+              >
+                Sync Module Numbers
+              </Button>
+              <Button
+                onClick={() => {
+                  setNewModule((prev) => ({
+                    ...prev,
+                    module_number: String(getNextModuleNumber()),
+                  }));
+                  setAdding(true);
+                }}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                <Plus size={20} className="mr-2" />
+                Add Module
+              </Button>
+            </div>
           )}
         </div>
 
@@ -278,7 +351,7 @@ export default function Courses({
                     value={newModule.module_number}
                     onChange={(e) => setNewModule({ ...newModule, module_number: e.target.value })}
                     className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    required
+                    required={false}
                   />
                 </div>
                 <div>
@@ -448,7 +521,7 @@ export default function Courses({
           )}
 
           {selectedTab === "structure" && (
-            <Structure moduleId={selectedModule.id} setSelectedTab={setSelectedTab} />
+            <Structure moduleId={selectedModule.id} languageId={selectedModule.language_id} setSelectedTab={setSelectedTab} />
           )}
 
           {selectedTab === "stories" && (

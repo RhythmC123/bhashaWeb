@@ -60,7 +60,7 @@ function SortableItem({ id, title, type }) {
   );
 }
 
-export default function Structure({ moduleId, setSelectedTab }) {
+export default function Structure({ moduleId, setSelectedTab, languageId }) {
   const [structure, setStructure] = useState([]);
   const [intros, setIntros] = useState([]);
   const [examples, setExamples] = useState([]);
@@ -159,7 +159,7 @@ export default function Structure({ moduleId, setSelectedTab }) {
       .from("question_group")
       .insert({
         module_id: moduleId,
-        language_id: 1, // You might want to get this from props
+        language_id: Number(languageId),
         title: newGroupTitle,
       })
       .select()

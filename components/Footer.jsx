@@ -28,7 +28,12 @@ export default function Footer() {
         </div>
 
         {/* Copyright */}
-        <p className="text-sm text-gray-400 mb-4">© 2025 Bhasha. All rights reserved.</p>
+        <p className="text-sm text-gray-400 mb-2">© 2025 Bhasha. All rights reserved.</p>
+        <div className="flex items-center justify-center gap-4 text-sm">
+          <Link href="/privacy" className="text-gray-300 hover:text-[#e67732] transition-colors">Privacy</Link>
+          <span className="text-gray-600">|</span>
+          <Link href="/terms" className="text-gray-300 hover:text-[#e67732] transition-colors">Terms</Link>
+        </div>
 
         {/* Optional admin link */}
         {/* 

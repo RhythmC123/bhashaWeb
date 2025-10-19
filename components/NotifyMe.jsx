@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import { useSession } from "@supabase/auth-helpers-react";
 import IndianFlag3D from "@/components/IndianFlag3D";
 import supabase from "@/lib/supabaseClient";
 
@@ -9,6 +12,8 @@ export default function NotifySection() {
   const [email, setEmail] = useState("");
   const [animateBird, setAnimateBird] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const router = useRouter();
+  const session = useSession();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,14 +76,40 @@ export default function NotifySection() {
                 disabled={animateBird}
               />
               {error && <p className="text-red-600">{error}</p>}
-              <button
-                disabled={animateBird}
-                className={`bg-black text-white w-48 my-10 p-4 rounded-2xl hover:bg-gray-300 hover:text-black transition-colors duration-300 ${
-                  animateBird ? "cursor-not-allowed opacity-50" : ""
-                }`}
-              >
-                Notify Me
-              </button>
+              <div className="flex items-center gap-4 my-10">
+                <button
+                  disabled={animateBird}
+                  className={`bg-black text-white px-6 py-4 rounded-2xl hover:bg-gray-300 hover:text-black transition-colors duration-300 ${
+                    animateBird ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                >
+                  Notify Me
+                </button>
+                {session?.user ? (
+                  <button
+                    type="button"
+                    onClick={() => router.push('/dashboard')}
+                    className="px-4 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold shadow-lg shadow-orange-900/30 hover:from-orange-600 hover:to-orange-700 transition-colors"
+                  >
+                    Go to Dashboard
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => router.push('/login')}
+                    className="rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    aria-label="Sign in with Google"
+                  >
+                    <Image
+                      src={require("@/components/signin-assets/Web (mobile + desktop)/png@2x/neutral/web_neutral_rd_SI@2x.png")}
+                      alt="Sign in with Google"
+                      width={200}
+                      height={48}
+                      priority
+                    />
+                  </button>
+                )}
+              </div>
             </form>
           )}
         </div>

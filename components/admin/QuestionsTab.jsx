@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import AddQuestion from "./AddQ";
 import supabase from "@/lib/supabaseClient";
 import { Plus, Folder, HelpCircle, Edit3, Trash2 } from "lucide-react";
+// DnD removed per request
 
 export default function QuestionsTab({
   selectedModule,
@@ -27,6 +28,11 @@ export default function QuestionsTab({
   const [showAddGroup, setShowAddGroup] = useState(false);
   const [newGroupTitle, setNewGroupTitle] = useState("");
   const [editingGroup, setEditingGroup] = useState(null);
+  const [groupItems, setGroupItems] = useState([]);
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [assignTargetQuestion, setAssignTargetQuestion] = useState(null);
+  const [assignNewGroupTitle, setAssignNewGroupTitle] = useState("");
+  const [mappingTable, setMappingTable] = useState(null); // "question_group_items" | "question_group_map"
 
   // Fetch question groups
   useEffect(() => {
@@ -49,6 +55,38 @@ export default function QuestionsTab({
     }
   };
 
+  const resolveMappingTable = async () => {
+    // Try preferred names in order
+    const candidates = ["question_group_items", "question_group_map"];
+    for (const tbl of candidates) {
+      try {
+        const { error } = await supabase.from(tbl).select("id").limit(1);
+        if (!error) return tbl;
+      } catch (e) {
+        // try next
+      }
+    }
+    return null;
+  };
+
+  const fetchGroupItems = async (groupId) => {
+    try {
+      const tableName = mappingTable || (await resolveMappingTable());
+      if (!tableName) throw new Error("mapping table missing");
+      setMappingTable(tableName);
+      const { data, error } = await supabase
+        .from(tableName)
+        .select("*")
+        .eq("group_id", groupId)
+        .order("position", { ascending: true });
+      if (error) throw error;
+      setGroupItems(data || []);
+    } catch (err) {
+      console.warn("question group mapping missing or error:", err?.message);
+      setGroupItems([]);
+    }
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -66,7 +104,7 @@ export default function QuestionsTab({
       .from("question_group")
       .insert({
         module_id: selectedModule.id,
-        language_id: 1, // You might want to get this from props
+        language_id: Number(selectedModule.language_id),
         title: newGroupTitle,
       })
       .select()
@@ -121,6 +159,101 @@ export default function QuestionsTab({
         setSelectedGroup(null);
       }
     }
+  };
+
+  useEffect(() => {
+    if (selectedGroup?.id) fetchGroupItems(selectedGroup.id);
+  }, [selectedGroup]);
+
+  const groupedQuestionKeys = new Set(
+    groupItems.map((gi) => `${gi.question_type}:${gi.question_id}`)
+  );
+  const ungrouped = questions.filter(
+    (q) => !groupedQuestionKeys.has(`${q.type}:${q.id}`)
+  );
+  const grouped = groupItems
+    .map((gi) => {
+      const match = questions.find(
+        (q) => q.id === gi.question_id && q.type === gi.question_type
+      );
+      return match ? { ...match, _groupItemId: gi.id } : null;
+    })
+    .filter(Boolean);
+
+  const addToGroup = async ({ groupId, question }) => {
+    try {
+      const tableName = mappingTable || (await resolveMappingTable());
+      if (!tableName) throw new Error("mapping table missing");
+      setMappingTable(tableName);
+      const { data, error } = await supabase
+        .from(tableName)
+        .insert({
+          group_id: groupId,
+          question_type: question.type,
+          question_id: question.id,
+          position: (groupItems?.length || 0) + 1,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      setGroupItems([...(groupItems || []), data]);
+    } catch (err) {
+      alert("Missing join table (question_group_items or question_group_map). Create it and refresh.");
+    }
+  };
+
+  const removeFromGroup = async ({ groupItemId }) => {
+    try {
+      const tableName = mappingTable || (await resolveMappingTable());
+      if (!tableName) throw new Error("mapping table missing");
+      setMappingTable(tableName);
+      const { error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq("id", groupItemId);
+      if (error) throw error;
+      setGroupItems((prev) => prev.filter((gi) => gi.id !== groupItemId));
+    } catch (err) {
+      // ignore
+    }
+  };
+
+  // Assign modal helpers
+  const openAssignModal = (q) => {
+    setAssignTargetQuestion(q);
+    setAssignModalOpen(true);
+  };
+  const closeAssignModal = () => {
+    setAssignModalOpen(false);
+    setAssignTargetQuestion(null);
+    setAssignNewGroupTitle("");
+  };
+  const assignToExistingGroup = async (groupId) => {
+    if (!assignTargetQuestion) return;
+    await addToGroup({ groupId, question: assignTargetQuestion });
+    if (selectedGroup?.id === groupId) {
+      fetchGroupItems(groupId);
+    }
+    closeAssignModal();
+  };
+  const createGroupAndAssign = async () => {
+    const title = assignNewGroupTitle.trim();
+    if (!title) return;
+    const { data, error } = await supabase
+      .from("question_group")
+      .insert({
+        module_id: selectedModule.id,
+        language_id: Number(selectedModule.language_id),
+        title,
+      })
+      .select()
+      .single();
+    if (error) {
+      alert("Failed to create group");
+      return;
+    }
+    setQuestionGroups([...questionGroups, data]);
+    await assignToExistingGroup(data.id);
   };
 
   const handleSaveEdit = async () => {
@@ -320,6 +453,7 @@ export default function QuestionsTab({
                   <option value="all">All Types</option>
                   <option value="mcq">MCQ</option>
                   <option value="fill_in_blank">Fill in the Blank</option>
+                  <option value="multi">Multiple Correct</option>
                 </select>
                 <Button
                   onClick={() => setShowAddQ(true)}
@@ -330,6 +464,23 @@ export default function QuestionsTab({
                 </Button>
               </div>
             </div>
+
+            {selectedGroup && (
+              <div className="mb-6">
+                <h4 className="text-md font-semibold text-gray-900 mb-3">Questions in this group</h4>
+                <div className="space-y-3 h-[360px] overflow-auto p-3 border rounded bg-white">
+                  {grouped.map((q) => (
+                    <div key={`grouped:${q.id}`} className="p-3 bg-green-50 border border-green-200 rounded">
+                      <div className="text-xs text-green-700 mb-1 uppercase">{q.type}</div>
+                      <div className="text-gray-900">{q.question}</div>
+                    </div>
+                  ))}
+                  {grouped.length === 0 && (
+                    <div className="text-sm text-gray-500">No questions assigned yet.</div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Questions List */}
             {questions.length === 0 ? (
@@ -504,6 +655,13 @@ export default function QuestionsTab({
                             >
                               Delete
                             </Button>
+                            <Button
+                              onClick={() => openAssignModal(q)}
+                              size="sm"
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              Assign
+                            </Button>
                           </div>
                         </div>
                       )}
@@ -514,18 +672,122 @@ export default function QuestionsTab({
           </CardContent>
         </Card>
 
+        {assignModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Assign Question</h3>
+              <p className="text-sm text-gray-600 mb-4">Select a group to assign this question{assignTargetQuestion ? ` (ID #${assignTargetQuestion.id}, ${assignTargetQuestion.type})` : ''}.</p>
+              <div className="space-y-2 max-h-56 overflow-auto border rounded p-2 mb-4">
+                {questionGroups.length === 0 && (
+                  <div className="text-sm text-gray-500 p-2">No groups yet. Create one below.</div>
+                )}
+                {questionGroups.map((g) => (
+                  <div key={g.id} className="flex items-center justify-between p-2 border rounded">
+                    <div className="text-gray-900">{g.title}</div>
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => assignToExistingGroup(g.id)}>
+                      Assign here
+                    </Button>
+                  </div>
+                ))}
+              </div>
+              <div className="border-t pt-4 mt-4">
+                <Label className="text-sm text-gray-700">Create new group</Label>
+                <div className="mt-1 flex gap-2">
+                  <Input value={assignNewGroupTitle} onChange={(e) => setAssignNewGroupTitle(e.target.value)} placeholder="New group title" />
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={createGroupAndAssign}>Create & Assign</Button>
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end gap-2">
+                <Button variant="outline" onClick={closeAssignModal}>Cancel</Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Add Question Modal */}
         {showAddQ && (
           <AddQuestion
             moduleId={selectedModule.id}
-            onClose={() => setShowAddQ(false)}
-            onSuccess={() => {
+            languageId={selectedModule.language_id}
+            onDone={() => {
               setShowAddQ(false);
-              fetchQuestions();
+              fetchQuestions(selectedModule);
             }}
           />
         )}
       </div>
+    </div>
+  );
+}
+
+function SortableQuestionItem({ id, className, children }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={className}>
+      {children}
+    </div>
+  );
+}
+
+function DroppableList({ id, className, children }) {
+  const { setNodeRef, isOver } = useDroppable({ id });
+  return (
+    <div ref={setNodeRef} className={className + (isOver ? " ring-2 ring-blue-400" : "")}>{children}</div>
+  );
+}
+
+function GroupPreview({ groupId, allQuestions, onAdd }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const run = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("question_group_items")
+          .select("*")
+          .eq("group_id", groupId)
+          .order("position", { ascending: true });
+        if (error) throw error;
+        if (!isMounted) return;
+        const qs = (data || [])
+          .map((gi) => allQuestions.find((q) => q.id === gi.question_id && q.type === gi.question_type))
+          .filter(Boolean);
+        setItems(qs);
+      } catch (e) {
+        setItems([]);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    run();
+    return () => {
+      isMounted = false;
+    };
+  }, [groupId, allQuestions]);
+
+  if (loading) return <div className="p-3 text-sm text-gray-500">Loading…</div>;
+  if (!items.length) return <div className="p-3 text-sm text-gray-500">No questions yet.</div>;
+
+  return (
+    <div className="p-3 space-y-2">
+      {items.map((q) => (
+        <div key={`${q.type}:${q.id}`} className="p-2 bg-gray-50 border rounded flex items-center justify-between">
+          <div>
+            <div className="text-xs text-gray-500 uppercase">{q.type}</div>
+            <div className="text-gray-900">{q.question}</div>
+          </div>
+          <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white" onClick={() => onAdd(q)}>
+            Add to selected
+          </Button>
+        </div>
+      ))}
     </div>
   );
 }

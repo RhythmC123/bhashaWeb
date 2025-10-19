@@ -22,7 +22,7 @@ export default function AdminNav() {
           <Link href="/">
             <span className={styles.navItem}>Manage Courses</span>
           </Link>
-          <Link href="/admin">
+          <Link href="/admin/people">
             <span className={styles.navItem}>People management</span>
           </Link>
         </div>

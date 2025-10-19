@@ -2,6 +2,11 @@
 
 import { useEffect, useState } from "react";
 import supabase from "@/lib/supabaseClient";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Lightbulb, Plus, Edit3, Trash2, ArrowLeft } from "lucide-react";
 
 export default function Examples({ moduleId }) {
   const [groups, setGroups] = useState([]);
@@ -9,27 +14,26 @@ export default function Examples({ moduleId }) {
   const [examples, setExamples] = useState([]);
   const [newGroupName, setNewGroupName] = useState("");
   const [newExample, setNewExample] = useState({ title: "", content: "" });
+  const [showAddGroup, setShowAddGroup] = useState(false);
 
-  // Fetch example groups
   const fetchGroups = async () => {
     const { data, error } = await supabase
       .from("example_groups")
       .select("*")
-      .eq("module_id", moduleId);
-
+      .eq("module_id", moduleId)
+      .order("id", { ascending: true });
     if (error) console.error(error);
-    else setGroups(data);
+    else setGroups(data || []);
   };
 
-  // Fetch examples for selected group
   const fetchExamples = async (groupId) => {
     const { data, error } = await supabase
       .from("examples")
       .select("*")
-      .eq("group_id", groupId);
-
+      .eq("group_id", groupId)
+      .order("id", { ascending: true });
     if (error) console.error(error);
-    else setExamples(data);
+    else setExamples(data || []);
   };
 
   useEffect(() => {
@@ -37,153 +41,142 @@ export default function Examples({ moduleId }) {
   }, [moduleId]);
 
   useEffect(() => {
-    if (selectedGroup) fetchExamples(selectedGroup.id);
+    if (selectedGroup?.id) fetchExamples(selectedGroup.id);
   }, [selectedGroup]);
 
-  // Add new group
-  const handleAddGroup = async () => {
-    if (!newGroupName) return;
-
+  const handleAddGroup = async (e) => {
+    e?.preventDefault?.();
+    if (!newGroupName.trim()) return;
     const { data, error } = await supabase
       .from("example_groups")
-      .insert({ module_id: moduleId, name: newGroupName })
+      .insert({ module_id: moduleId, name: newGroupName.trim() })
       .select()
       .single();
-
-    if (error) console.error(error);
-    else {
+    if (error) {
+      console.error(error);
+      alert("Failed to create example group");
+    } else {
       setNewGroupName("");
+      setSelectedGroup(data);
       fetchGroups();
-      setSelectedGroup(data); // auto-select the new group
     }
   };
 
-  // Add new example
-  const handleAddExample = async () => {
-    if (!newExample.title) return;
-
-    const { data, error } = await supabase
+  const handleAddExample = async (e) => {
+    e?.preventDefault?.();
+    if (!selectedGroup?.id || !newExample.title.trim()) return;
+    const { error } = await supabase
       .from("examples")
-      .insert({ group_id: selectedGroup.id, ...newExample })
-      .select()
-      .single();
-
-    if (error) console.error(error);
-    else {
+      .insert({ group_id: selectedGroup.id, title: newExample.title.trim(), content: newExample.content });
+    if (error) {
+      console.error(error);
+      alert("Failed to add example");
+    } else {
       setNewExample({ title: "", content: "" });
       fetchExamples(selectedGroup.id);
     }
   };
 
+  const handleDeleteExample = async (exampleId) => {
+    const { error } = await supabase.from("examples").delete().eq("id", exampleId);
+    if (error) alert("Failed to delete example");
+    else fetchExamples(selectedGroup.id);
+  };
+
   return (
-    <div className="flex flex-col gap-4 text-white">
-      <h2 className="text-xl font-bold">Example Groups</h2>
-
-      {!selectedGroup ? (
-        <div>
-          {groups.length === 0 && (
-            <div className="mb-4">
-              <input
-                type="text"
-                placeholder="New group name"
-                value={newGroupName}
-                onChange={(e) => setNewGroupName(e.target.value)}
-                className="border p-1 mr-2 rounded text-black"
-              />
-              <button
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-                onClick={handleAddGroup}
-              >
-                Add Group
-              </button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+      <div className="max-w-5xl mx-auto">
+        <Card className="mb-6 bg-white shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="text-blue-500" size={24} />
+                <h2 className="text-2xl font-semibold text-gray-900">Example Groups</h2>
+              </div>
+              {!selectedGroup && (
+                <Button onClick={() => setShowAddGroup(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Plus size={16} className="mr-2" />
+                  New Group
+                </Button>
+              )}
             </div>
-          )}
 
-          <ul className="space-y-2">
-            {groups.map((group) => (
-              <li
-                key={group.id}
-                className="p-2 border rounded cursor-pointer hover:bg-gray-700 hover:text-white"
-                onClick={() => setSelectedGroup(group)}
-              >
-                {group.name}
-              </li>
-            ))}
-          </ul>
+            {!selectedGroup ? (
+              <div>
+                {showAddGroup && (
+                  <form onSubmit={handleAddGroup} className="mb-4 p-4 bg-gray-50 rounded-lg flex gap-2 items-end">
+                    <div className="flex-1">
+                      <Label className="text-sm text-gray-700">Group Name</Label>
+                      <Input value={newGroupName} onChange={(e) => setNewGroupName(e.target.value)} placeholder="Enter group name" />
+                    </div>
+                    <Button type="submit" className="bg-blue-600 hover:bg-blue-700">Create</Button>
+                    <Button type="button" variant="outline" onClick={() => setShowAddGroup(false)}>Cancel</Button>
+                  </form>
+                )}
 
-          {groups.length > 0 && (
-            <div className="mt-4">
-              <input
-                type="text"
-                placeholder="New group name"
-                value={newGroupName}
-                onChange={(e) => setNewGroupName(e.target.value)}
-                className="border p-1 mr-2 rounded text-black"
-              />
-              <button
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-                onClick={handleAddGroup}
-              >
-                Add Group
-              </button>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div>
-          <button
-            className="mb-4 text-blue-300 underline"
-            onClick={() => setSelectedGroup(null)}
-          >
-            ← Back to Groups
-          </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {groups.map((group) => (
+                    <Card key={group.id} className="cursor-pointer hover:shadow-md transition-all duration-200" onClick={() => setSelectedGroup(group)}>
+                      <CardContent className="p-4">
+                        <div className="font-medium text-gray-900">{group.name}</div>
+                        <div className="text-sm text-gray-600">Group ID: {group.id}</div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {groups.length === 0 && (
+                    <div className="text-gray-500">No example groups yet. Create one to get started.</div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <Button variant="outline" className="mb-4" onClick={() => setSelectedGroup(null)}>
+                  <ArrowLeft size={16} className="mr-2" /> Back to Groups
+                </Button>
 
-          <h3 className="text-lg font-semibold mb-2">{selectedGroup.name}</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">{selectedGroup.name}</h3>
 
-          <div className="mb-4 border p-2 rounded">
-            <h4 className="font-bold mb-1">Add New Example</h4>
-            <input
-              type="text"
-              placeholder="Title"
-              value={newExample.title}
-              onChange={(e) =>
-                setNewExample({ ...newExample, title: e.target.value })
-              }
-              className="border p-1 w-full mb-1 rounded text-black"
-            />
-            <textarea
-              placeholder="Content"
-              value={newExample.content}
-              onChange={(e) =>
-                setNewExample({ ...newExample, content: e.target.value })
-              }
-              className="border p-1 w-full mb-1 rounded text-black"
-            />
-            <button
-              className="bg-green-500 text-white px-3 py-1 rounded"
-              onClick={handleAddExample}
-            >
-              Add Example
-            </button>
-          </div>
+                <form onSubmit={handleAddExample} className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-sm text-gray-700">Title</Label>
+                      <Input value={newExample.title} onChange={(e) => setNewExample({ ...newExample, title: e.target.value })} placeholder="Example title" />
+                    </div>
+                    <div>
+                      <Label className="text-sm text-gray-700">Content</Label>
+                      <Input value={newExample.content} onChange={(e) => setNewExample({ ...newExample, content: e.target.value })} placeholder="Explain the concept..." />
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <Button type="submit" className="bg-green-600 hover:bg-green-700">Add Example</Button>
+                  </div>
+                </form>
 
-          {examples.length === 0 ? (
-            <p>No examples found.</p>
-          ) : (
-            <ul className="space-y-4">
-              {examples.map((ex) => (
-                <li
-                  key={ex.id}
-                  className="p-3 border rounded hover:bg-gray-700 hover:text-white"
-                >
-                  <h4 className="font-bold">{ex.title}</h4>
-                  <p>{ex.content}</p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+                <div className="space-y-3">
+                  {examples.length === 0 ? (
+                    <div className="text-gray-500">No examples yet.</div>
+                  ) : (
+                    examples.map((ex) => (
+                      <Card key={ex.id} className="hover:shadow-sm">
+                        <CardContent className="p-4 flex items-start justify-between gap-4">
+                          <div>
+                            <div className="font-medium text-gray-900">{ex.title}</div>
+                            <div className="text-sm text-gray-600 whitespace-pre-wrap">{ex.content}</div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => alert("Edit coming soon")}> <Edit3 size={14} /> </Button>
+                            <Button size="sm" variant="outline" className="text-red-600" onClick={() => handleDeleteExample(ex.id)}> <Trash2 size={14} /> </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
