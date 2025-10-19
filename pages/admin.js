@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from '../styles/Admin.module.css'
 
-// auth removed for now
+import { AdminProtectedRoute } from '@/components/ProtectedRoute'
 
 import AdminNav from '@/components/admin/AdminNav'
 import SideBarAdmin from '@/components/admin/SideBarAdmin'
@@ -142,39 +142,41 @@ function AdminPanel() {
   // No auth loading state
 
   return (
-    <div className={styles.container}>
-      <AdminNav />
+    <AdminProtectedRoute>
+      <div className={styles.container}>
+        <AdminNav />
 
-      <div className={styles.contentWrapper}>
-        <SideBarAdmin
-          selectedSection={selectedSection}
-          setSelectedSection={setSelectedSection}
-        />
+        <div className={styles.contentWrapper}>
+          <SideBarAdmin
+            selectedSection={selectedSection}
+            setSelectedSection={setSelectedSection}
+          />
 
-        <div className='flex-1 p-8 h-vh-100'>
+          <div className='flex-1 p-8 h-vh-100'>
+          
+          {/* Breadcrumb */}
+          {breadcrumb.length > 0 && (
+            <div className="mb-4 text-gray-300 flex items-center gap-1">
+              {breadcrumb.map((item, idx) => (
+                <span key={idx} className="flex items-center gap-1">
+                  <button
+                    onClick={item.onClick}
+                    className="text-orange-400 hover:text-orange-300 hover:underline"
+                  >
+                    {item.name}
+                  </button>
+                  {idx < breadcrumb.length - 1 && <span className="text-gray-500">/</span>}
+                </span>
+              ))}
+            </div>
+          )}
 
-        {/* Breadcrumb */}
-        {breadcrumb.length > 0 && (
-          <div className="mb-4 text-gray-300 flex items-center gap-1">
-            {breadcrumb.map((item, idx) => (
-              <span key={idx} className="flex items-center gap-1">
-                <button
-                  onClick={item.onClick}
-                  className="text-orange-400 hover:text-orange-300 hover:underline"
-                >
-                  {item.name}
-                </button>
-                {idx < breadcrumb.length - 1 && <span className="text-gray-500">/</span>}
-              </span>
-            ))}
+
+          <main className={styles.mainContent}>{renderContent()}</main>
           </div>
-        )}
-
-
-        <main className={styles.mainContent}>{renderContent()}</main>
         </div>
       </div>
-    </div>
+    </AdminProtectedRoute>
   )
 }
 

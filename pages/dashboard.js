@@ -62,6 +62,14 @@ export default function Dashboard() {
                 <p className="text-orange-100/90">
                   Feel free to grab a coffee, stretch, or check your messages. We’ll notify you as soon as your app is ready!
                 </p>
+                <div className="flex justify-center">
+                  <Link
+                    href="/admin-login"
+                    className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-orange-100 transition-colors text-sm"
+                  >
+                    If you are an admin, you can login here
+                  </Link>
+                </div>
                 <div className="flex items-center justify-center gap-2 text-orange-100/90 text-sm">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="text-orange-200 animate-bounce">
                     <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0 1 18 14.158V11a6.002 6.002 0 0 0-4-5.659V4a2 2 0 1 0-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 1 1-6 0v-1m6 0H9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

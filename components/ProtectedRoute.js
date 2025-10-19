@@ -23,3 +23,32 @@ export default function ProtectedRoute({ children }) {
 
   return children
 }
+
+export function AdminProtectedRoute({ children }) {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session?.user?.email) {
+        router.replace('/login')
+        return
+      }
+
+      const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '').split(',').map(e => e.trim()).filter(Boolean)
+      const isAllowed = adminEmails.includes(session.user.email)
+      if (!isAllowed) {
+        router.replace('/dashboard')
+        return
+      }
+
+      setLoading(false)
+    }
+
+    checkAdmin()
+  }, [router])
+
+  if (loading) return <div>Loading...</div>
+  return children
+}

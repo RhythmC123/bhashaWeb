@@ -17,6 +17,8 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
     o3: "",
     o4: "",
     correct: "",
+    chapter_id: "",
+    classification: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -71,6 +73,8 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
           language_id: Number(languageId),
           type: type,
           image: imageUrl,
+          chapter_id: form.chapter_id ? Number(form.chapter_id) : null,
+          classification: form.classification || null,
         },
       ]);
       error = mcqError;
@@ -108,7 +112,7 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
       alert("❌ Failed: " + error.message);
     } else {
       alert("✅ Question added!");
-      setForm({ question: "", o1: "", o2: "", o3: "", o4: "", correct: "" });
+      setForm({ question: "", o1: "", o2: "", o3: "", o4: "", correct: "", chapter_id: "", classification: "" });
       setImageFile(null);
       setPreviewUrl(null);
       if (onDone) onDone();
@@ -189,6 +193,28 @@ export default function AddQuestion({ moduleId, languageId, onDone }) {
                       : "Enter the correct option text"
                   }
                 />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Chapter ID (optional)</Label>
+                  <Input
+                    type="number"
+                    name="chapter_id"
+                    value={form.chapter_id}
+                    onChange={handleChange}
+                    placeholder="e.g., 12"
+                  />
+                </div>
+                <div>
+                  <Label>Classification (optional)</Label>
+                  <Input
+                    type="text"
+                    name="classification"
+                    value={form.classification}
+                    onChange={handleChange}
+                    placeholder="e.g., grammar, vocab, easy, hard"
+                  />
+                </div>
               </div>
             </>
           )}

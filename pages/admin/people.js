@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Search, MoreVertical, Eye, Edit2, Ban, Plus, UsersRound, UserPlus, Shield, ChevronLeft, ChevronRight, RefreshCw, Mail } from 'lucide-react'
 import supabase from '@/lib/supabaseClient'
+import { AdminProtectedRoute } from '@/components/ProtectedRoute'
 
 const MOCK_CUSTOMERS = [
   { id: 'c_1', name: 'Arjun Mehta', email: 'arjun@example.com', registeredAt: '2024-12-01', status: 'Active' },
@@ -118,12 +119,13 @@ export default function PeopleManagementPage() {
   }
 
   return (
-    <div className={styles.container}>
-      <AdminNav />
-      <div className={styles.contentWrapper}>
-        <SideBarAdmin selectedSection={'dashboard'} setSelectedSection={() => {}} />
-
-        <div className="flex-1 p-8 h-vh-100">
+    <AdminProtectedRoute>
+      <div className={styles.container}>
+        <AdminNav />
+        <div className={styles.contentWrapper}>
+          <SideBarAdmin selectedSection={'dashboard'} setSelectedSection={() => {}} />
+          
+          <div className="flex-1 p-8 h-vh-100">
           <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-gray-100">People Management</h1>
@@ -577,9 +579,10 @@ export default function PeopleManagementPage() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
-    </div>
+    </AdminProtectedRoute>
   )
 }
 

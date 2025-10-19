@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +33,7 @@ export default function QuestionsTab({
   const [assignTargetQuestion, setAssignTargetQuestion] = useState(null);
   const [assignNewGroupTitle, setAssignNewGroupTitle] = useState("");
   const [mappingTable, setMappingTable] = useState(null); // "question_group_items" | "question_group_map"
+  const addQuestionRef = useRef(null);
 
   // Fetch question groups
   useEffect(() => {
@@ -40,6 +41,13 @@ export default function QuestionsTab({
       fetchQuestionGroups();
     }
   }, [selectedModule]);
+
+  // Smooth scroll to the Add Question area when opened
+  useEffect(() => {
+    if (showAddQ && addQuestionRef.current) {
+      addQuestionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showAddQ]);
 
   const fetchQuestionGroups = async () => {
     const { data, error } = await supabase
@@ -432,8 +440,8 @@ export default function QuestionsTab({
         </Card>
 
         {/* Questions Section */}
-        <Card className="bg-white shadow-lg">
-          <CardContent className="p-6">
+        <Card className="bg-white shadow-lg h-[80vh]">
+          <CardContent className="p-6 h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <HelpCircle className="text-blue-500" size={24} />
@@ -483,18 +491,19 @@ export default function QuestionsTab({
             )}
 
             {/* Questions List */}
-            {questions.length === 0 ? (
-              <div className="text-center py-12 text-gray-500">
-                <HelpCircle size={48} className="mx-auto mb-4 text-gray-300" />
-                <p>No questions found for this module.</p>
-                <p className="text-sm mt-2">Add some questions to get started.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {questions
-                  .filter((q) => filterType === "all" || q.type === filterType)
-                  .map((q, idx) => (
-                    <Card key={idx} className="p-6 hover:shadow-md transition-shadow duration-200">
+            <div className="flex-1 overflow-y-auto">
+              {questions.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">
+                  <HelpCircle size={48} className="mx-auto mb-4 text-gray-300" />
+                  <p>No questions found for this module.</p>
+                  <p className="text-sm mt-2">Add some questions to get started.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {questions
+                    .filter((q) => filterType === "all" || q.type === filterType)
+                    .map((q, idx) => (
+                      <Card key={idx} className="p-6 hover:shadow-md transition-shadow duration-200">
                       {editingQuestion?.id === q.id ? (
                         <div className="space-y-4">
                           <div>
@@ -585,6 +594,28 @@ export default function QuestionsTab({
                             </div>
                           )}
 
+                          {/* Extra MCQ metadata */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                            <div>
+                              <Label className="text-sm font-medium text-gray-700 mb-2 block">Chapter ID</Label>
+                              <Input
+                                type="number"
+                                value={editingQuestion.chapter_id ?? ''}
+                                onChange={(e) => setEditingQuestion({ ...editingQuestion, chapter_id: e.target.value })}
+                                placeholder="e.g., 12"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-sm font-medium text-gray-700 mb-2 block">Classification</Label>
+                              <Input
+                                type="text"
+                                value={editingQuestion.classification ?? ''}
+                                onChange={(e) => setEditingQuestion({ ...editingQuestion, classification: e.target.value })}
+                                placeholder="e.g., grammar, vocab, easy, hard"
+                              />
+                            </div>
+                          </div>
+
                           <div className="flex gap-2 pt-4">
                             <Button
                               onClick={handleSaveEdit}
@@ -665,10 +696,11 @@ export default function QuestionsTab({
                           </div>
                         </div>
                       )}
-                    </Card>
-                  ))}
-              </div>
-            )}
+                      </Card>
+                    ))}
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
 
@@ -706,14 +738,16 @@ export default function QuestionsTab({
 
         {/* Add Question Modal */}
         {showAddQ && (
-          <AddQuestion
-            moduleId={selectedModule.id}
-            languageId={selectedModule.language_id}
-            onDone={() => {
-              setShowAddQ(false);
-              fetchQuestions(selectedModule);
-            }}
-          />
+          <div ref={addQuestionRef}>
+            <AddQuestion
+              moduleId={selectedModule.id}
+              languageId={selectedModule.language_id}
+              onDone={() => {
+                setShowAddQ(false);
+                fetchQuestions(selectedModule);
+              }}
+            />
+          </div>
         )}
       </div>
     </div>
