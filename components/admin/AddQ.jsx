@@ -347,8 +347,8 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
             </select>
           </div>
 
-          {/* Question Field - hide for rearrange */}
-          {type !== "rearrange" && (
+          {/* Question Field - hide for rearrange, translate, binary, and bins (these have their own) */}
+          {type !== "rearrange" && type !== "translate" && type !== "binary" && type !== "bins" && (
             <div>
               <Label>{type === "match" ? "Heading" : "Question"}</Label>
               <Textarea
