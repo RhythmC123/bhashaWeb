@@ -461,6 +461,7 @@ export default function QuestionsTab({
                   <option value="all">All Types</option>
                   <option value="mcq">MCQ</option>
                   <option value="fill_in_blank">Fill in the Blank</option>
+                  <option value="match">Match</option>
                   <option value="multi">Multiple Correct</option>
                 </select>
                 <Button
@@ -636,7 +637,7 @@ export default function QuestionsTab({
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-3">
                               <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                                {q.type === "mcq" ? "MCQ" : "Fill in the Blank"}
+                                {q.type === "mcq" ? "MCQ" : q.type === "fill_in_blank" ? "Fill in the Blank" : q.type === "match" ? "Match" : q.type}
                               </span>
                               {q.image && (
                                 <img
@@ -665,6 +666,25 @@ export default function QuestionsTab({
                             {q.type === "fill_in_blank" && (
                               <div className="text-sm font-medium text-green-600 bg-green-50 p-3 rounded">
                                 ✓ Answer: {q.correct}
+                              </div>
+                            )}
+
+                            {q.type === "match" && (
+                              <div className="space-y-2">
+                                <div className="text-gray-900 font-semibold">{q.Heading || q.heading}</div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  <div className="bg-gray-50 p-2 rounded">
+                                    <div className="text-xs text-gray-500 uppercase mb-1">Side 1</div>
+                                    <div className="text-sm text-gray-800 break-words">{q.side1}</div>
+                                  </div>
+                                  <div className="bg-gray-50 p-2 rounded">
+                                    <div className="text-xs text-gray-500 uppercase mb-1">Side 2</div>
+                                    <div className="text-sm text-gray-800 break-words">{q.side2}</div>
+                                  </div>
+                                </div>
+                                <div className="text-sm font-medium text-green-700 bg-green-50 p-3 rounded">
+                                  ✓ Correct: {q.correct}
+                                </div>
                               </div>
                             )}
                           </div>
@@ -742,6 +762,7 @@ export default function QuestionsTab({
             <AddQuestion
               moduleId={selectedModule.id}
               languageId={selectedModule.language_id}
+                  chapterId={selectedModule.chapter_id}
               onDone={() => {
                 setShowAddQ(false);
                 fetchQuestions(selectedModule);

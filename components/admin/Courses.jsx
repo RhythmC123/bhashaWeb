@@ -34,6 +34,8 @@ export default function Courses({
   setSelectedLanguage,
 }) {
   const [modules, setModules] = useState([]);
+  const [chapters, setChapters] = useState([]);
+  const [selectedChapter, setSelectedChapter] = useState(null);
   const [languages, setLanguages] = useState([]);
   const [adding, setAdding] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,14 +52,23 @@ export default function Courses({
     module_number: "",
   });
 
-  // Fetch languages & modules
+  // Fetch languages & chapters
   useEffect(() => {
     fetchLanguages();
     if (language?.id) {
-      fetchModules(language.id);
+      fetchChapters(language.id);
       setNewModule((prev) => ({ ...prev, language_id: language.id }));
     }
   }, [language]);
+
+  // Refetch modules when selected chapter changes
+  useEffect(() => {
+    if (language?.id && selectedChapter?.chapter_id != null) {
+      fetchModules(language.id, selectedChapter.chapter_id);
+    } else {
+      setModules([]);
+    }
+  }, [selectedChapter]);
 
   // Fetch all languages
   const fetchLanguages = async () => {
@@ -69,18 +80,38 @@ export default function Courses({
     else setLanguages(data);
   };
 
-  // Fetch modules for a given language
-  const fetchModules = async (langId) => {
+  // Fetch chapters for a given language
+  const fetchChapters = async (langId) => {
     if (!langId) return;
 
     const { data, error } = await supabase
+      .from("chapter")
+      .select("*")
+      .eq("language_id", Number(langId))
+      .order("chapter_id", { ascending: true });
+
+    if (error) console.error(error);
+    else setChapters(data || []);
+  };
+
+  // Fetch modules for a given language, optionally filtered by chapter
+  const fetchModules = async (langId, chapterId) => {
+    if (!langId) return;
+
+    let query = supabase
       .from("modules")
       .select("*")
       .eq("language_id", Number(langId))
       .order("module_number", { ascending: true });
 
+    if (chapterId != null) {
+      query = query.eq("chapter_id", Number(chapterId));
+    }
+
+    const { data, error } = await query;
+
     if (error) console.error(error);
-    else setModules(data);
+    else setModules(data || []);
   };
 
   // Compute the next module number for the current language
@@ -100,6 +131,10 @@ export default function Courses({
       alert("Please select a language.");
       return;
     }
+    if (!selectedChapter || selectedChapter.chapter_id == null) {
+      alert("Please select a chapter first.");
+      return;
+    }
 
     // Auto-assign module_number if not provided
     const finalModuleNumber = newModule.module_number
@@ -111,6 +146,7 @@ export default function Courses({
         ...newModule,
         language_id: Number(newModule.language_id),
         module_number: Number(finalModuleNumber),
+        chapter_id: Number(selectedChapter.chapter_id),
       },
     ]);
 
@@ -125,7 +161,7 @@ export default function Courses({
         description: "",
         module_number: "",
       });
-      fetchModules(language.id);
+      fetchModules(language.id, selectedChapter.chapter_id);
       setAdding(false);
     }
   };
@@ -219,6 +255,22 @@ export default function Courses({
     if (mcqError) console.error(mcqError);
     else results.push(...mcq.map((q) => ({ ...q, type: "mcq" })));
 
+    // Match questions
+    try {
+      const { data: matchQs, error: matchErr } = await supabase
+        .from("match")
+        .select("*")
+        .eq("module_id", module.id)
+        .eq("language_id", module.language_id);
+      if (!matchErr && matchQs) {
+        results.push(
+          ...matchQs.map((q) => ({ ...q, type: "match" }))
+        );
+      }
+    } catch (e) {
+      // ignore if table missing
+    }
+
     // Multi-correct questions (optional table)
     try {
       const { data: multi, error: multiError } = await supabase
@@ -240,21 +292,23 @@ export default function Courses({
   const handleBack = () => {
     if (selectedModule) {
       setSelectedModule(null);
-      setBreadcrumb([{ name: language.name, onClick: () => {
-        setSelectedSection('languages');
-        setSelectedLanguage(null);
-        setSelectedModule(null);
-        setBreadcrumb([]);
-      }}]);
+    } else if (selectedChapter) {
+      setSelectedChapter(null);
+      setModules([]);
     } else {
       setSelectedSection('languages');
       setSelectedLanguage(null);
       setSelectedModule(null);
+      setSelectedChapter(null);
       setBreadcrumb([]);
     }
   };
 
-  // Filter modules based on search
+  // Filter chapters/modules based on search
+  const filteredChapters = chapters.filter((ch) =>
+    (ch.chapter_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+    String(ch.chapter_id || "").toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const filteredModules = modules.filter(module =>
     module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     module.description.toLowerCase().includes(searchTerm.toLowerCase())
@@ -278,25 +332,26 @@ export default function Courses({
             </div>
             <div>
               <h1 className="text-4xl font-bold text-white">
-                {selectedModule ? selectedModule.title : 
-                 language ? `${language.name} Modules` : "Modules"}
+                {selectedModule
+                  ? selectedModule.title
+                  : selectedChapter
+                    ? `${language?.name || ''} • Chapter ${selectedChapter.chapter_id}${selectedChapter.chapter_name ? `: ${selectedChapter.chapter_name}` : ''}`
+                    : language
+                      ? `${language.name} Chapters`
+                      : "Chapters"}
               </h1>
               <p className="text-gray-400 text-lg">
-                {selectedModule ? "Module Details" : 
-                 "Manage your course modules"}
+                {selectedModule
+                  ? "Module Details"
+                  : selectedChapter
+                    ? "Manage modules for this chapter"
+                    : "Manage your chapters"}
               </p>
             </div>
           </div>
           
-          {!selectedModule && (
+          {!selectedModule && selectedChapter && (
             <div className="flex items-center gap-3">
-              <Button
-                onClick={handleSyncModuleNumbers}
-                variant="outline"
-                className="border-gray-600 text-gray-300 hover:bg-gray-700 rounded-xl"
-              >
-                Sync Module Numbers
-              </Button>
               <Button
                 onClick={() => {
                   setNewModule((prev) => ({
@@ -400,7 +455,60 @@ export default function Courses({
       )}
 
       {/* Content Area */}
-      {!selectedModule ? (
+      {!selectedModule && !selectedChapter && (
+        /* Chapters List */
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredChapters.map((ch) => (
+            <Card
+              key={ch.id}
+              className="group bg-gray-800/50 border-gray-600 hover:border-orange-500/50 backdrop-blur-sm transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/10 cursor-pointer overflow-hidden"
+              onClick={() => setSelectedChapter(ch)}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-orange-500/20 rounded-xl">
+                    <BookOpen className="text-orange-400" size={24} />
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    Chapter ID: {ch.chapter_id}
+                  </div>
+                </div>
+                
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">
+                  {ch.chapter_name || `Chapter ${ch.chapter_id}`}
+                </h3>
+                
+                <div className="pt-4 border-t border-gray-600">
+                  <div className="flex items-center justify-between text-sm text-gray-400">
+                    <span>Click to view modules</span>
+                    <ChevronRight size={16} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+
+          {/* Empty State for Chapters */}
+          {filteredChapters.length === 0 && (
+            <Card className="col-span-full bg-gray-800/50 border-gray-600 backdrop-blur-sm">
+              <CardContent className="p-12 text-center">
+                <BookOpen className="mx-auto text-gray-400 mb-4" size={64} />
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  {searchTerm ? 'No chapters found' : 'No chapters yet'}
+                </h3>
+                <p className="text-gray-400 mb-6">
+                  {searchTerm 
+                    ? `No chapters match "${searchTerm}". Try a different search term.`
+                    : 'Create chapters in your database to organize modules.'
+                  }
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {!selectedModule && selectedChapter && (
         /* Modules List */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredModules.map((module) => (
@@ -478,7 +586,9 @@ export default function Courses({
             </Card>
           )}
         </div>
-      ) : (
+      )}
+
+      {selectedModule && (
         /* Module Details with Tabs */
         <div>
           {/* Tabs */}
