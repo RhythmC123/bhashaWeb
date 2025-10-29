@@ -33,6 +33,25 @@ export default function AdminLogin() {
     }
   }
 
+  const signInWithMicrosoft = async () => {
+    try {
+      setLoading(true)
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'azure',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/admin-login` : undefined,
+        },
+      })
+      if (error) {
+        setMessage('Failed to start Microsoft sign-in.')
+        setLoading(false)
+      }
+    } catch (e) {
+      setMessage('Unexpected error starting Microsoft sign-in.')
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     const guard = async () => {
       if (!session?.user || processedRef.current) return
@@ -102,6 +121,19 @@ export default function AdminLogin() {
               />
             </button>
           </div>
+
+          {process.env.NEXT_PUBLIC_ENABLE_MICROSOFT === 'true' && (
+            <div className="mt-4 flex items-center justify-center">
+              <button
+                type="button"
+                onClick={signInWithMicrosoft}
+                disabled={loading}
+                className="px-4 py-3 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text:white font-medium transition-colors disabled:opacity-60"
+              >
+                Sign in with Microsoft
+              </button>
+            </div>
+          )}
 
           {message ? (
             <p className="text-center text-sm text-orange-100/90">{message}</p>

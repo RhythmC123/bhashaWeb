@@ -11,6 +11,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false)
   const [statusMessage, setStatusMessage] = useState('')
   const processedRef = useRef(false)
+  const [magicWord, setMagicWord] = useState('')
 
   const signInWithGoogle = async () => {
     try {
@@ -29,6 +30,36 @@ export default function Login() {
     } catch (e) {
       setStatusMessage('Unexpected error starting Google sign-in.')
       setLoading(false)
+    }
+  }
+
+  const signInWithMicrosoft = async () => {
+    try {
+      setLoading(true)
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'azure',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/login` : undefined,
+        },
+      })
+      if (error) {
+        setStatusMessage('Failed to start Microsoft sign-in.')
+        setLoading(false)
+      }
+    } catch (e) {
+      setStatusMessage('Unexpected error starting Microsoft sign-in.')
+      setLoading(false)
+    }
+  }
+
+  const handleMagicBypass = () => {
+    if (magicWord.trim() === 'LOVEBHASHA123') {
+      try {
+        document.cookie = `bhasha_admin=1; path=/; max-age=${60 * 60 * 24 * 30}`
+      } catch {}
+      router.replace('/admin')
+    } else {
+      setStatusMessage('Invalid magic word.')
     }
   }
 
@@ -134,6 +165,39 @@ export default function Login() {
                 priority
               />
             </button>
+          </div>
+
+          {process.env.NEXT_PUBLIC_ENABLE_MICROSOFT === 'true' && (
+            <div className="mt-4 flex items-center justify-center">
+              <button
+                type="button"
+                onClick={signInWithMicrosoft}
+                disabled={loading}
+                className="px-4 py-3 rounded-xl bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-medium transition-colors disabled:opacity-60"
+              >
+                Sign in with Microsoft
+              </button>
+            </div>
+          )}
+
+          <div className="mt-6">
+            <div className="text-center text-sm text-orange-200/80 mb-2">or use a magic word</div>
+            <div className="flex items-center gap-2">
+              <input
+                type="password"
+                value={magicWord}
+                onChange={(e) => setMagicWord(e.target.value)}
+                placeholder="Enter magic word"
+                className="flex-1 rounded-xl px-4 py-3 text-white bg-white/10 border border-white/10 placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-orange-400/60 focus:border-transparent"
+              />
+              <button
+                type="button"
+                onClick={handleMagicBypass}
+                className="rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold px-4 py-3 shadow-lg shadow-orange-900/30 hover:from-orange-600 hover:to-orange-700"
+              >
+                Enter
+              </button>
+            </div>
           </div>
 
           {statusMessage ? (
