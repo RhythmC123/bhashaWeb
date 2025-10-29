@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import AddQuestion from "./AddQ";
 import supabase from "@/lib/supabaseClient";
-import { Plus, Folder, HelpCircle, Edit3, Trash2 } from "lucide-react";
+import { Plus, Folder, HelpCircle, Edit3, Trash2, X } from "lucide-react";
 // DnD removed per request
 
 export default function QuestionsTab({
@@ -451,6 +451,17 @@ export default function QuestionsTab({
                 <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">
                   {questions.length} questions
                 </span>
+                {selectedGroup && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSelectedGroup(null)}
+                    className="ml-2"
+                  >
+                    <X size={16} className="mr-1" />
+                    Close Group
+                  </Button>
+                )}
               </div>
               <div className="flex gap-3">
                 <select
@@ -462,6 +473,10 @@ export default function QuestionsTab({
                   <option value="mcq">MCQ</option>
                   <option value="fill_in_blank">Fill in the Blank</option>
                   <option value="match">Match</option>
+                  <option value="rearrange">Rearrange</option>
+                  <option value="translate">Translate</option>
+                  <option value="binary">Binary Choice</option>
+                  <option value="bins">Bins</option>
                   <option value="multi">Multiple Correct</option>
                 </select>
                 <Button
@@ -637,7 +652,7 @@ export default function QuestionsTab({
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-3">
                               <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                                {q.type === "mcq" ? "MCQ" : q.type === "fill_in_blank" ? "Fill in the Blank" : q.type === "match" ? "Match" : q.type}
+                                {q.type === "mcq" ? "MCQ" : q.type === "fill_in_blank" ? "Fill in the Blank" : q.type === "match" ? "Match" : q.type === "rearrange" ? "Rearrange" : q.type === "translate" ? "Translate" : q.type === "binary" ? "Binary Choice" : q.type === "bins" ? "Bins" : q.type}
                               </span>
                               {q.image && (
                                 <img
@@ -684,6 +699,78 @@ export default function QuestionsTab({
                                 </div>
                                 <div className="text-sm font-medium text-green-700 bg-green-50 p-3 rounded">
                                   ✓ Correct: {q.correct}
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === "rearrange" && (
+                              <div className="space-y-2">
+                                <div className="bg-gray-50 p-2 rounded">
+                                  <div className="text-xs text-gray-500 uppercase mb-1">Words</div>
+                                  <div className="text-sm text-gray-800 break-words">{q.words}</div>
+                                </div>
+                                <div className="text-sm font-medium text-green-700 bg-green-50 p-3 rounded">
+                                  ✓ Correct Order: {q.correct_order}
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === "translate" && (
+                              <div className="space-y-2">
+                                <div className="text-gray-900 font-semibold">{q.Heading || q.heading}</div>
+                                {q.Subheading && (
+                                  <div className="text-sm text-gray-600">{q.Subheading}</div>
+                                )}
+                                <div className="text-sm text-gray-800 bg-gray-50 p-2 rounded">
+                                  {q.question}
+                                </div>
+                                <div className="text-sm font-medium text-green-700 bg-green-50 p-3 rounded">
+                                  ✓ Answer: {q.answer}
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === "binary" && (
+                              <div className="space-y-2">
+                                <div className="text-gray-900 font-semibold">{q.Heading || q.heading}</div>
+                                {q.Subheading && (
+                                  <div className="text-sm text-gray-600">{q.Subheading}</div>
+                                )}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  <div className="bg-gray-50 p-2 rounded">
+                                    <div className="text-xs text-gray-500 uppercase mb-1">Option 1</div>
+                                    <div className="text-sm text-gray-800">{q.o1}</div>
+                                    {q.image1 && (
+                                      <img src={q.image1} alt="Option 1" className="mt-2 w-16 h-16 object-cover rounded" />
+                                    )}
+                                  </div>
+                                  <div className="bg-gray-50 p-2 rounded">
+                                    <div className="text-xs text-gray-500 uppercase mb-1">Option 2</div>
+                                    <div className="text-sm text-gray-800">{q.o2}</div>
+                                    {q.image2 && (
+                                      <img src={q.image2} alt="Option 2" className="mt-2 w-16 h-16 object-cover rounded" />
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="text-sm font-medium text-green-700 bg-green-50 p-3 rounded">
+                                  ✓ Correct: {q.answer}
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === "bins" && (
+                              <div className="space-y-2">
+                                <div className="text-gray-900 font-semibold">{q.Heading || q.heading}</div>
+                                <div className="bg-gray-50 p-2 rounded">
+                                  <div className="text-xs text-gray-500 uppercase mb-1">Bin Names</div>
+                                  <div className="text-sm text-gray-800 break-words">{q.bin_names}</div>
+                                </div>
+                                <div className="bg-gray-50 p-2 rounded">
+                                  <div className="text-xs text-gray-500 uppercase mb-1">Options</div>
+                                  <div className="text-sm text-gray-800 break-words">{q.options_4_sepration}</div>
+                                </div>
+                                <div className="text-sm font-medium text-green-700 bg-green-50 p-3 rounded">
+                                  ✓ Answers: {q.answers}
                                 </div>
                               </div>
                             )}

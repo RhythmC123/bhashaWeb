@@ -197,8 +197,37 @@ export default function Courses({
 
   // Delete a question
   const handleDeleteQuestion = async (q) => {
+    let tableName;
+    switch (q.type) {
+      case "mcq":
+      case "multimcq":
+        tableName = "mcq";
+        break;
+      case "fill_in_blank":
+        tableName = "fillblank";
+        break;
+      case "match":
+        tableName = "match";
+        break;
+      case "rearrange":
+        tableName = "rearrange";
+        break;
+      case "translate":
+        tableName = "Translate";
+        break;
+      case "binary":
+        tableName = "binary";
+        break;
+      case "bins":
+        tableName = "bins";
+        break;
+      default:
+        alert("❌ Unknown question type, cannot delete.");
+        return;
+    }
+
     const { error } = await supabase
-      .from(q.type === "mcq" ? "mcq" : "fillblank") // choose table
+      .from(tableName)
       .delete()
       .eq("id", q.id);
 
@@ -213,8 +242,37 @@ export default function Courses({
 
   // Update a question
   const handleUpdateQuestion = async (q) => {
+    let tableName;
+    switch (q.type) {
+      case "mcq":
+      case "multimcq":
+        tableName = "mcq";
+        break;
+      case "fill_in_blank":
+        tableName = "fillblank";
+        break;
+      case "match":
+        tableName = "match";
+        break;
+      case "rearrange":
+        tableName = "rearrange";
+        break;
+      case "translate":
+        tableName = "Translate";
+        break;
+      case "binary":
+        tableName = "binary";
+        break;
+      case "bins":
+        tableName = "bins";
+        break;
+      default:
+        alert("❌ Unknown question type, cannot update.");
+        return;
+    }
+
     const { error } = await supabase
-      .from(q.type === "mcq" ? "mcq" : "fillblank")
+      .from(tableName)
       .update(q)
       .eq("id", q.id);
 
@@ -265,6 +323,70 @@ export default function Courses({
       if (!matchErr && matchQs) {
         results.push(
           ...matchQs.map((q) => ({ ...q, type: "match" }))
+        );
+      }
+    } catch (e) {
+      // ignore if table missing
+    }
+
+    // Rearrange questions
+    try {
+      const { data: rearrQs, error: rearrErr } = await supabase
+        .from("rearrange")
+        .select("*")
+        .eq("module_id", module.id)
+        .eq("language_id", module.language_id);
+      if (!rearrErr && rearrQs) {
+        results.push(
+          ...rearrQs.map((q) => ({ ...q, type: "rearrange" }))
+        );
+      }
+    } catch (e) {
+      // ignore if table missing
+    }
+
+    // Translate questions
+    try {
+      const { data: transQs, error: transErr } = await supabase
+        .from("Translate")
+        .select("*")
+        .eq("module_id", module.id)
+        .eq("language_id", module.language_id);
+      if (!transErr && transQs) {
+        results.push(
+          ...transQs.map((q) => ({ ...q, type: "translate" }))
+        );
+      }
+    } catch (e) {
+      // ignore if table missing
+    }
+
+    // Binary questions
+    try {
+      const { data: binQs, error: binErr } = await supabase
+        .from("binary")
+        .select("*")
+        .eq("module_id", module.id)
+        .eq("language_id", module.language_id);
+      if (!binErr && binQs) {
+        results.push(
+          ...binQs.map((q) => ({ ...q, type: "binary" }))
+        );
+      }
+    } catch (e) {
+      // ignore if table missing
+    }
+
+    // Bins questions
+    try {
+      const { data: binsQs, error: binsErr } = await supabase
+        .from("bins")
+        .select("*")
+        .eq("module_id", module.id)
+        .eq("language_id", module.language_id);
+      if (!binsErr && binsQs) {
+        results.push(
+          ...binsQs.map((q) => ({ ...q, type: "bins" }))
         );
       }
     } catch (e) {

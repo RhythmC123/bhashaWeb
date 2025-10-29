@@ -12,6 +12,9 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
   const [type, setType] = useState("mcq");
   const [form, setForm] = useState({
     question: "",
+    heading: "",
+    subheading: "",
+    answer: "",
     o1: "",
     o2: "",
     o3: "",
@@ -20,10 +23,20 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
     options: "",
     side1: "",
     side2: "",
-    classification: "",
+    words: "",
+    correct_order: "",
+    selectedAnswer: "",
+    bin_names: "",
+    options_4_sepration: "",
+    answers: "",
+    classification: "modulepractice",
   });
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [image1File, setImage1File] = useState(null);
+  const [image1Preview, setImage1Preview] = useState(null);
+  const [image2File, setImage2File] = useState(null);
+  const [image2Preview, setImage2Preview] = useState(null);
   const [selectedCorrect, setSelectedCorrect] = useState([]); // stores codes like ["o1", "o3"]
 
   const allowedClassifications = [
@@ -45,12 +58,30 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
     }
   };
 
+  const handleImage1Change = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage1File(file);
+      setImage1Preview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleImage2Change = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage2File(file);
+      setImage2Preview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     let error = null;
     let imageUrl = null;
+    let image1Url = null;
+    let image2Url = null;
 
-    // Upload image if present
+    // Upload image if present (for match/translate)
     if (imageFile) {
       const fileExt = imageFile.name.split(".").pop();
       const fileName = `${Date.now()}.${fileExt}`;
@@ -68,6 +99,46 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
         .getPublicUrl(data.path);
 
       imageUrl = publicURL;
+    }
+
+    // Upload image1 if present (for binary)
+    if (image1File) {
+      const fileExt = image1File.name.split(".").pop();
+      const fileName = `image1-${Date.now()}.${fileExt}`;
+      const { data, error: uploadError1 } = await supabase.storage
+        .from("mcq-images")
+        .upload(fileName, image1File);
+
+      if (uploadError1) {
+        alert("❌ Image1 upload failed: " + uploadError1.message);
+        return;
+      }
+
+      const { publicURL: publicURL1 } = supabase.storage
+        .from("mcq-images")
+        .getPublicUrl(data.path);
+
+      image1Url = publicURL1;
+    }
+
+    // Upload image2 if present (for binary)
+    if (image2File) {
+      const fileExt = image2File.name.split(".").pop();
+      const fileName = `image2-${Date.now()}.${fileExt}`;
+      const { data, error: uploadError2 } = await supabase.storage
+        .from("mcq-images")
+        .upload(fileName, image2File);
+
+      if (uploadError2) {
+        alert("❌ Image2 upload failed: " + uploadError2.message);
+        return;
+      }
+
+      const { publicURL: publicURL2 } = supabase.storage
+        .from("mcq-images")
+        .getPublicUrl(data.path);
+
+      image2Url = publicURL2;
     }
 
     // Validate classification
@@ -144,15 +215,98 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
         },
       ]);
       error = matchErr;
+    } else if (type === "rearrange") {
+      if (!form.words.trim() || !form.correct_order.trim()) {
+        alert("Please fill Words and Correct Order for rearrange.");
+        return;
+      }
+      const { error: rearrErr } = await supabase.from("rearrange").insert([
+        {
+          words: form.words,
+          correct_order: form.correct_order,
+          module_id: Number(moduleId),
+          language_id: Number(languageId),
+          chapter_id: chapterId != null ? Number(chapterId) : null,
+          type: "rearrange",
+          classification: form.classification || null,
+        },
+      ]);
+      error = rearrErr;
+    } else if (type === "translate") {
+      if (!form.heading.trim() || !form.question.trim() || !form.answer.trim()) {
+        alert("Please fill Heading, Question, and Answer for translate.");
+        return;
+      }
+      const { error: transErr } = await supabase.from("Translate").insert([
+        {
+          heading: form.heading,
+          subheading: form.subheading,
+          question: form.question,
+          answer: form.answer,
+          image: imageUrl,
+          module_id: Number(moduleId),
+          language_id: Number(languageId),
+          chapter_id: chapterId != null ? Number(chapterId) : null,
+          type: "translate",
+          classification: form.classification || null,
+        },
+      ]);
+      error = transErr;
+    } else if (type === "binary") {
+      if (!form.o1.trim() || !form.o2.trim() || !form.selectedAnswer) {
+        alert("Please fill o1, o2, and select the correct answer for binary.");
+        return;
+      }
+      const answerText = form.selectedAnswer === "o1" ? form.o1 : form.o2;
+      const { error: binaryErr } = await supabase.from("binary").insert([
+        {
+          o1: form.o1,
+          o2: form.o2,
+          answer: answerText,
+          image1: image1Url,
+          image2: image2Url,
+          Heading: form.question, // using question as heading
+          Subheading: form.subheading,
+          module_id: Number(moduleId),
+          language_id: Number(languageId),
+          chapter_id: chapterId != null ? Number(chapterId) : null,
+          type: "binary",
+          classification: form.classification || null,
+        },
+      ]);
+      error = binaryErr;
+    } else if (type === "bins") {
+      if (!form.bin_names.trim() || !form.options_4_sepration.trim() || !form.answers.trim()) {
+        alert("Please fill Bin Names, Options, and Answers for bins.");
+        return;
+      }
+      const { error: binsErr } = await supabase.from("bins").insert([
+        {
+          bin_names: form.bin_names,
+          options_4_sepration: form.options_4_sepration,
+          answers: form.answers,
+          Heading: form.question, // using question as heading
+          module_id: Number(moduleId),
+          language_id: Number(languageId),
+          chapter_id: chapterId != null ? Number(chapterId) : null,
+          type: "bins",
+          classification: form.classification || null,
+        },
+      ]);
+      error = binsErr;
     }
 
     if (error) {
       alert("❌ Failed: " + error.message);
     } else {
       alert("✅ Question added!");
-      setForm({ question: "", o1: "", o2: "", o3: "", o4: "", correct: "", options: "", side1: "", side2: "", classification: "" });
+      setForm({ question: "", heading: "", subheading: "", answer: "", o1: "", o2: "", o3: "", o4: "", correct: "", options: "", side1: "", side2: "", words: "", correct_order: "", selectedAnswer: "", bin_names: "", options_4_sepration: "", answers: "", classification: "modulepractice" });
       setImageFile(null);
       setPreviewUrl(null);
+      setImage1File(null);
+      setImage1Preview(null);
+      setImage2File(null);
+      setImage2Preview(null);
       setSelectedCorrect([]);
       if (onDone) onDone();
     }
@@ -170,9 +324,14 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
             <select
               value={type}
               onChange={(e) => {
-                setType(e.target.value);
+                const newType = e.target.value;
+                setType(newType);
                 setSelectedCorrect([]);
-                setForm({ ...form, correct: "" });
+                if (newType === "translate") {
+                  setForm({ ...form, heading: "Type the Answer", correct: "", question: "", subheading: "", answer: "" });
+                } else {
+                  setForm({ ...form, correct: "" });
+                }
               }}
               className="w-full border rounded p-2 text-black"
             >
@@ -180,22 +339,28 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
               <option value="mcq_image">MCQ with Image</option>
               <option value="fill_in_blank">Fill in the Blank</option>
               <option value="match">Match</option>
+              <option value="rearrange">Rearrange</option>
+              <option value="translate">Translate</option>
+              <option value="binary">Binary Choice</option>
+              <option value="bins">Bins</option>
               <option value="multimcq">Multiple Correct (MCQ)</option>
             </select>
           </div>
 
-          {/* Question Field */}
-          <div>
-            <Label>{type === "match" ? "Heading" : "Question"}</Label>
-            <Textarea
-              name="question"
-              value={form.question}
-              onChange={handleChange}
-              rows={3}
-              placeholder={type === "match" ? "Enter the main instruction/heading..." : "Enter your question..."}
-              required
-            />
-          </div>
+          {/* Question Field - hide for rearrange */}
+          {type !== "rearrange" && (
+            <div>
+              <Label>{type === "match" ? "Heading" : "Question"}</Label>
+              <Textarea
+                name="question"
+                value={form.question}
+                onChange={handleChange}
+                rows={3}
+                placeholder={type === "match" ? "Enter the main instruction/heading..." : "Enter your question..."}
+                required
+              />
+            </div>
+          )}
 
           {/* Classification (required for all types) */}
           <div>
@@ -219,7 +384,7 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
           </div>
 
           {/* Image Upload */}
-          {(type === "mcq_image" || type === "match") && (
+          {(type === "mcq_image" || type === "match" || type === "translate") && (
             <div>
               <Label>Question Image</Label>
               <Input type="file" accept="image/*" onChange={handleImageChange} />
@@ -275,6 +440,208 @@ export default function AddQuestion({ moduleId, languageId, onDone, chapterId })
             </>
           )}
 
+          {/* Translate Type */}
+          {type === "translate" && (
+            <>
+              <div>
+                <Label>Heading</Label>
+                <Input
+                  type="text"
+                  name="heading"
+                  value={form.heading}
+                  onChange={handleChange}
+                  placeholder="Type the Answer"
+                />
+              </div>
+              <div>
+                <Label>Subheading</Label>
+                <Input
+                  type="text"
+                  name="subheading"
+                  value={form.subheading}
+                  onChange={handleChange}
+                  placeholder="e.g., Formal greeting"
+                />
+              </div>
+              <div>
+                <Label>Question</Label>
+                <Textarea
+                  name="question"
+                  value={form.question}
+                  onChange={handleChange}
+                  rows={2}
+                  placeholder="e.g., Type 'How are you?' in Telugu."
+                />
+              </div>
+              <div>
+                <Label>Answer</Label>
+                <Textarea
+                  name="answer"
+                  value={form.answer}
+                  onChange={handleChange}
+                  rows={2}
+                  placeholder="e.g., ఎలా ఉన్నారు?"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Binary Type */}
+          {type === "binary" && (
+            <>
+              <div>
+                <Label>Heading</Label>
+                <Input
+                  type="text"
+                  name="question"
+                  value={form.question}
+                  onChange={handleChange}
+                  placeholder="e.g., Choose the Correct Word"
+                />
+              </div>
+              <div>
+                <Label>Subheading</Label>
+                <Input
+                  type="text"
+                  name="subheading"
+                  value={form.subheading}
+                  onChange={handleChange}
+                  placeholder="e.g., Which means 'big'?"
+                />
+              </div>
+              <div>
+                <Label>Option 1</Label>
+                <Input
+                  type="text"
+                  name="o1"
+                  value={form.o1}
+                  onChange={handleChange}
+                  placeholder="e.g., పెద్ద (big)"
+                />
+              </div>
+              <div>
+                <Label>Option 2</Label>
+                <Input
+                  type="text"
+                  name="o2"
+                  value={form.o2}
+                  onChange={handleChange}
+                  placeholder="e.g., చిన్న (small)"
+                />
+              </div>
+              <div>
+                <Label>Correct Answer</Label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="selectedAnswer"
+                      value="o1"
+                      checked={form.selectedAnswer === "o1"}
+                      onChange={handleChange}
+                    />
+                    Option 1
+                  </label>
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="selectedAnswer"
+                      value="o2"
+                      checked={form.selectedAnswer === "o2"}
+                      onChange={handleChange}
+                    />
+                    Option 2
+                  </label>
+                </div>
+              </div>
+              <div>
+                <Label>Image 1 (optional)</Label>
+                <Input type="file" accept="image/*" onChange={handleImage1Change} />
+                {image1Preview && (
+                  <img src={image1Preview} alt="Image 1 Preview" className="mt-2 max-h-40" />
+                )}
+              </div>
+              <div>
+                <Label>Image 2 (optional)</Label>
+                <Input type="file" accept="image/*" onChange={handleImage2Change} />
+                {image2Preview && (
+                  <img src={image2Preview} alt="Image 2 Preview" className="mt-2 max-h-40" />
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Bins Type */}
+          {type === "bins" && (
+            <>
+              <div>
+                <Label>Heading</Label>
+                <Input
+                  type="text"
+                  name="question"
+                  value={form.question}
+                  onChange={handleChange}
+                  placeholder="e.g., Sort into Living (+) or Non-Living (-)"
+                />
+              </div>
+              <div>
+                <Label>Bin Names (comma separated)</Label>
+                <Input
+                  type="text"
+                  name="bin_names"
+                  value={form.bin_names}
+                  onChange={handleChange}
+                  placeholder="e.g., +Living Things, -Non-Living Things"
+                />
+              </div>
+              <div>
+                <Label>Options (comma separated with markers)</Label>
+                <Textarea
+                  name="options_4_sepration"
+                  value={form.options_4_sepration}
+                  onChange={handleChange}
+                  rows={2}
+                  placeholder="e.g., నాన్న(+), చెట్టు(+), పుస్తకం(-), బండి(-), పిల్లి(+), గది(-)"
+                />
+              </div>
+              <div>
+                <Label>Answers (formatted)</Label>
+                <Textarea
+                  name="answers"
+                  value={form.answers}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="e.g., +Living Things=నాన్న(+), చెట్టు(+), పిల్లి(+); -Non-Living Things=పుస్తకం(-), బండి(-), గది(-)"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Rearrange Type */}
+          {type === "rearrange" && (
+            <>
+              <div>
+                <Label>Words (comma separated)</Label>
+                <Textarea
+                  name="words"
+                  value={form.words}
+                  onChange={handleChange}
+                  rows={2}
+                  placeholder="e.g., నేను, ఒక, విద్యార్థిని."
+                />
+              </div>
+              <div>
+                <Label>Correct Order (comma separated)</Label>
+                <Textarea
+                  name="correct_order"
+                  value={form.correct_order}
+                  onChange={handleChange}
+                  rows={2}
+                  placeholder="e.g., నేను, ఒక, విద్యార్థిని."
+                />
+              </div>
+            </>
+          )}
           {/* Fill in the Blank */}
           {type === "fill_in_blank" && (
             <>

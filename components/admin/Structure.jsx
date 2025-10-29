@@ -9,9 +9,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, GripVertical, BookOpen, Lightbulb, HelpCircle, FileText } from "lucide-react";
+import { Plus, GripVertical, BookOpen, Lightbulb, HelpCircle, FileText, Trash2 } from "lucide-react";
 
-function SortableItem({ id, title, type }) {
+function SortableItem({ id, title, type, onRemove }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -45,10 +45,9 @@ function SortableItem({ id, title, type }) {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
       className={`flex items-center gap-3 p-4 rounded-lg border-2 ${getTypeColor(type)} shadow-sm cursor-move hover:shadow-md transition-all duration-200 w-full`}
     >
-      <GripVertical className="text-gray-400 cursor-grab" size={20} />
+      <GripVertical className="text-gray-400 cursor-grab" size={20} {...listeners} />
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
           {getTypeIcon(type)}
@@ -56,6 +55,23 @@ function SortableItem({ id, title, type }) {
         </div>
         <span className="text-sm text-gray-600 capitalize">{type} Block</span>
       </div>
+      <Button
+        size="sm"
+        variant="ghost"
+        onClick={(e) => {
+          console.log("[Structure] Trash icon clicked", { id, title, type });
+          try {
+            e.stopPropagation();
+          } catch (err) {
+            console.log("[Structure] stopPropagation error (safe to ignore)", err);
+          }
+          console.log("[Structure] Invoking onRemove with id", id);
+          onRemove(id);
+        }}
+        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+      >
+        <Trash2 size={16} />
+      </Button>
     </div>
   );
 }
@@ -86,6 +102,7 @@ export default function Structure({ moduleId, setSelectedTab, languageId }) {
   };
 
   const fetchSources = async () => {
+    // Always show all items in source lists (allow duplicates in structure)
     const { data: introData } = await supabase
       .from("intro_groups")
       .select("*")
@@ -146,8 +163,41 @@ export default function Structure({ moduleId, setSelectedTab, languageId }) {
       .select()
       .single();
 
-    if (error) console.error(error);
-    else setStructure([...structure, data]);
+    if (error) {
+      console.error(error);
+      alert("Failed to add item to structure");
+    } else {
+      setStructure([...structure, data]);
+    }
+  };
+
+  // Remove item from structure (returns it to source boxes)
+  const handleRemoveFromStructure = async (id) => {
+    console.log("[Structure] handleRemoveFromStructure called with id:", id);
+    console.log("[Structure] Current structure length:", structure?.length);
+    const itemToRemove = structure.find(item => item.id === id);
+    console.log("[Structure] itemToRemove:", itemToRemove);
+    if (!itemToRemove) {
+      console.log("[Structure] No item found for id, aborting delete.");
+      return;
+    }
+
+    console.log("[Structure] Deleting from module_structure where id=", id);
+    const { error } = await supabase
+      .from("module_structure")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error("[Structure] Delete error:", error);
+      alert("Failed to remove item from structure");
+    } else {
+      console.log("[Structure] Delete success for id:", id);
+      // Remove from structure only; sources always show everything
+      const next = structure.filter(item => item.id !== id);
+      console.log("[Structure] New structure length:", next.length);
+      setStructure(next);
+    }
   };
 
   // Add new question group
@@ -194,7 +244,7 @@ export default function Structure({ moduleId, setSelectedTab, languageId }) {
             
             <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={structure.map((s) => s.id)}>
-                <div className="space-y-3 min-h-[200px]">
+                <div className="space-y-3 min-h-[200px] max-h-[600px] overflow-y-auto pr-2">
                   {structure.length === 0 ? (
                     <div className="text-center py-12 text-gray-500">
                       <BookOpen size={48} className="mx-auto mb-4 text-gray-300" />
@@ -207,6 +257,7 @@ export default function Structure({ moduleId, setSelectedTab, languageId }) {
                         id={item.id}
                         title={item.title}
                         type={item.block_type}
+                        onRemove={handleRemoveFromStructure}
                       />
                     ))
                   )}
@@ -273,18 +324,9 @@ export default function Structure({ moduleId, setSelectedTab, languageId }) {
           {/* Question Groups */}
           <Card className="bg-white shadow-lg">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <HelpCircle className="text-green-500" size={20} />
-                  <h3 className="text-lg font-semibold text-gray-900">Question Groups</h3>
-                </div>
-                <Button
-                  size="sm"
-                  onClick={() => setShowAddGroup(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white"
-                >
-                  <Plus size={16} />
-                </Button>
+              <div className="flex items-center gap-2 mb-4">
+                <HelpCircle className="text-green-500" size={20} />
+                <h3 className="text-lg font-semibold text-gray-900">Question Groups</h3>
               </div>
               
               {/* Add Question Group Form */}
