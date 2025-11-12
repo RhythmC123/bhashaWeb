@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
+        <meta name="google-site-verification" content="MFm-z1wEMGXTTBoipeEj25UON0DAzv7kBjWxvZOWm60" />
         <link rel="icon" href="/images/bhasha.jpeg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
