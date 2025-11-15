@@ -26,6 +26,7 @@ export default function Index() {
   const [error, setError] = useState("");
   const [showBetaPlatforms, setShowBetaPlatforms] = useState(false);
   const [showAndroidMessage, setShowAndroidMessage] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const notifyRef = useRef(null);
 
   const handleScrollToNotify = () => {
@@ -40,6 +41,15 @@ export default function Index() {
 
   runAnimation();
 }, []);
+
+  // Auto-advance slider for mobile
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % 4);
+    }, 5000);
+
+    return () => clearInterval(slideInterval);
+  }, []);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -212,7 +222,88 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Image Gallery Section */}
+      <section className="w-full py-12 sm:py-16" style={{ backgroundColor: '#cb7c06' }}>
+        <div className="container mx-auto px-4 sm:px-6">
+          {/* Desktop Grid - Hidden on mobile */}
+          <div className="hidden md:grid grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+            <div className="flex justify-center">
+              <img 
+                src="/images/1.png" 
+                alt="Bhasha feature 1" 
+                className="w-full h-auto max-w-xs"
+              />
+            </div>
+            <div className="flex justify-center">
+              <img 
+                src="/images/2.png" 
+                alt="Bhasha feature 2" 
+                className="w-full h-auto max-w-xs"
+              />
+            </div>
+            <div className="flex justify-center">
+              <img 
+                src="/images/3.png" 
+                alt="Bhasha feature 3" 
+                className="w-full h-auto max-w-xs"
+              />
+            </div>
+            <div className="flex justify-center">
+              <img 
+                src="/images/4.png" 
+                alt="Bhasha feature 4" 
+                className="w-full h-auto max-w-xs"
+              />
+            </div>
+          </div>
 
+          {/* Mobile Slider - Hidden on desktop */}
+          <div className="md:hidden overflow-hidden" style={{ height: '400px', touchAction: 'pan-y' }}>
+            <div 
+              className="flex transition-transform duration-500 ease-in-out h-full"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+              {/* Image order: 1, 4, 2, 3 */}
+              <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
+                <img 
+                  src="/images/1.png" 
+                  alt="Bhasha feature 1" 
+                  className="w-full h-full object-contain"
+                  style={{ touchAction: 'none', userSelect: 'none' }}
+                  draggable="false"
+                />
+              </div>
+              <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
+                <img 
+                  src="/images/4.png" 
+                  alt="Bhasha feature 4" 
+                  className="w-full h-full object-contain"
+                  style={{ touchAction: 'none', userSelect: 'none' }}
+                  draggable="false"
+                />
+              </div>
+              <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
+                <img 
+                  src="/images/2.png" 
+                  alt="Bhasha feature 2" 
+                  className="w-full h-full object-contain"
+                  style={{ touchAction: 'none', userSelect: 'none' }}
+                  draggable="false"
+                />
+              </div>
+              <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
+                <img 
+                  src="/images/3.png" 
+                  alt="Bhasha feature 3" 
+                  className="w-full h-full object-contain"
+                  style={{ touchAction: 'none', userSelect: 'none' }}
+                  draggable="false"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section id="team" className="fade-in-section container flex flex-col items-center mx-auto p-6 sm:p-10">
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold py-6 sm:py-10 text-center">
