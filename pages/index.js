@@ -198,9 +198,11 @@ export default function Index() {
               <div className="py-6 sm:py-8">
                 {/* Show image above button on mobile only */}
                 <div className="md:hidden mb-6 flex justify-center">
-                  <img 
+                  <Image 
                     src="/images/vaani.png" 
                     alt="Vaani the Bhasha mascot" 
+                    width={192}
+                    height={192}
                     className="w-48 h-auto"
                   />
                 </div>
@@ -212,9 +214,11 @@ export default function Index() {
               </div>
             </div>
             <div className="hidden md:block flex-shrink-0 md:max-w-xs lg:max-w-sm">
-              <img 
+              <Image 
                 src="/images/vaani.png" 
                 alt="Vaani the Bhasha mascot" 
+                width={400}
+                height={400}
                 className="w-full h-auto"
               />
             </div>
@@ -228,30 +232,38 @@ export default function Index() {
           {/* Desktop Grid - Hidden on mobile */}
           <div className="hidden md:grid grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
             <div className="flex justify-center">
-              <img 
+              <Image 
                 src="/images/1.png" 
                 alt="Bhasha feature 1" 
+                width={320}
+                height={320}
                 className="w-full h-auto max-w-xs"
               />
             </div>
             <div className="flex justify-center">
-              <img 
+              <Image 
                 src="/images/2.png" 
                 alt="Bhasha feature 2" 
+                width={320}
+                height={320}
                 className="w-full h-auto max-w-xs"
               />
             </div>
             <div className="flex justify-center">
-              <img 
+              <Image 
                 src="/images/3.png" 
                 alt="Bhasha feature 3" 
+                width={320}
+                height={320}
                 className="w-full h-auto max-w-xs"
               />
             </div>
             <div className="flex justify-center">
-              <img 
+              <Image 
                 src="/images/4.png" 
                 alt="Bhasha feature 4" 
+                width={320}
+                height={320}
                 className="w-full h-auto max-w-xs"
               />
             </div>
@@ -265,39 +277,47 @@ export default function Index() {
             >
               {/* Image order: 1, 4, 2, 3 */}
               <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
-                <img 
+                <Image 
                   src="/images/1.png" 
                   alt="Bhasha feature 1" 
+                  width={400}
+                  height={400}
                   className="w-full h-full object-contain"
                   style={{ touchAction: 'none', userSelect: 'none' }}
-                  draggable="false"
+                  draggable={false}
                 />
               </div>
               <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
-                <img 
+                <Image 
                   src="/images/4.png" 
                   alt="Bhasha feature 4" 
+                  width={400}
+                  height={400}
                   className="w-full h-full object-contain"
                   style={{ touchAction: 'none', userSelect: 'none' }}
-                  draggable="false"
+                  draggable={false}
                 />
               </div>
               <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
-                <img 
+                <Image 
                   src="/images/2.png" 
                   alt="Bhasha feature 2" 
+                  width={400}
+                  height={400}
                   className="w-full h-full object-contain"
                   style={{ touchAction: 'none', userSelect: 'none' }}
-                  draggable="false"
+                  draggable={false}
                 />
               </div>
               <div className="min-w-full flex items-center justify-center h-full flex-shrink-0">
-                <img 
+                <Image 
                   src="/images/3.png" 
                   alt="Bhasha feature 3" 
+                  width={400}
+                  height={400}
                   className="w-full h-full object-contain"
                   style={{ touchAction: 'none', userSelect: 'none' }}
-                  draggable="false"
+                  draggable={false}
                 />
               </div>
             </div>
@@ -328,7 +348,7 @@ export default function Index() {
             },
             {
               name: "Abhinav Jain",
-              role: "Mobile Developer",
+              role: "Founding Engineer",
               img: "/images/abhi.png",
             },
             {
@@ -344,7 +364,7 @@ export default function Index() {
               }`}
               data-index={idx % 3}
             >
-              <img className="rounded-full w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 object-cover" src={member.img} alt={member.name} />
+              <Image className="rounded-full w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 object-cover" src={member.img} alt={member.name} width={128} height={128} />
               <p className="text-base sm:text-lg font-bold mt-3 sm:mt-4 text-center">{member.name}</p>
               <p className="text-sm sm:text-md text-center">{member.role}</p>
             </div>
