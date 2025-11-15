@@ -53,8 +53,8 @@ export default function NotifySection() {
       <div className="container mx-auto flex flex-col lg:flex-row items-start justify-between gap-10 p-10">
         {/* LEFT: Form */}
         <div className="flex-1">
-          <h1 className="text-4xl text-black font-bold py-10">Get Notified</h1>
-
+          <h1 className="text-4xl text-black font-bold py-10">Releasing in November</h1>
+          <p className="text-lg text-black">Get notified when we release.</p>
           {isSubmitted ? (
             <p className="text-lg text-green-600">Thank you! You will be notified soon.</p>
           ) : (

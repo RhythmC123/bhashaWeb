@@ -10,13 +10,11 @@ const MobileMenuButton = memo(function MobileMenuButton({ isOpen, onToggle }) {
     <button
       type="button"
       onClick={onToggle}
-      className="sm:hidden text-white p-2 hover:bg-orange-500/20 rounded-lg transition-colors bg-orange-500/30 backdrop-blur-sm min-w-[40px] min-h-[40px] flex items-center justify-center"
+      className="md:hidden text-white p-2 hover:bg-orange-500/20 rounded-lg transition-colors bg-orange-500/30 backdrop-blur-sm min-w-[40px] min-h-[40px] flex items-center justify-center"
       aria-label="Toggle menu"
       aria-expanded={isOpen}
       style={{ 
-        display: 'block',
         position: 'relative',
-        visibility: 'visible',
         zIndex: 10000,
         pointerEvents: 'auto'
       }}
@@ -98,7 +96,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation - Hidden on mobile */}
-          <div className="hidden sm:flex items-center gap-4 md:gap-6 flex-1 justify-center">
+          <div className="hidden md:flex items-center gap-4 md:gap-6 flex-1 justify-center">
             <a
               href="/"
               className="text-lg font-semibold text-white hover:text-orange-200 px-3 py-2 rounded-lg hover:bg-orange-500/20 transition-colors"
@@ -117,6 +115,12 @@ export default function Navbar() {
             >
               Team
             </a>
+            <a
+              href="/support"
+              className="text-lg font-semibold text-white hover:text-orange-200 px-3 py-2 rounded-lg hover:bg-orange-500/20 transition-colors"
+            >
+              Contact Us
+            </a>
           </div>
 
           {/* Right side container */}
@@ -125,16 +129,8 @@ export default function Navbar() {
             <MobileMenuButton isOpen={isMenuOpen} onToggle={toggleMenu} />
 
             {/* Desktop Auth Buttons - Hidden on mobile */}
-            <div className="hidden sm:flex items-center">
-              {session?.user ? (
-                <button
-                  type="button"
-                  onClick={() => router.push('/dashboard')}
-                  className="px-4 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold shadow-lg hover:from-orange-600 hover:to-orange-700 transition-colors"
-                >
-                  Dashboard
-                </button>
-              ) : (
+            <div className="hidden md:flex items-center">
+              {!session?.user && (
                 <button
                   type="button"
                   onClick={() => router.push('/login')}
@@ -156,7 +152,7 @@ export default function Navbar() {
 
         {/* Mobile Dropdown Menu */}
         <div
-          className={`sm:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           }`}
         >
@@ -179,18 +175,13 @@ export default function Navbar() {
             >
               Team
             </button>
-            {session?.user ? (
-              <button
-                type="button"
-                onClick={() => {
-                  closeMenu();
-                  router.push('/dashboard');
-                }}
-                className="w-full text-left px-3 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold shadow-lg hover:from-orange-600 hover:to-orange-700 transition-colors"
-              >
-                Dashboard
-              </button>
-            ) : (
+            <button
+              onClick={() => handleLinkClick('/support')}
+              className="w-full text-left text-lg font-semibold text-white hover:text-orange-200 px-3 py-2 rounded-lg hover:bg-orange-500/20 transition-colors"
+            >
+              Contact Us
+            </button>
+            {!session?.user && (
               <button
                 type="button"
                 onClick={() => {

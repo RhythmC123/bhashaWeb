@@ -10,7 +10,7 @@ function ContactRequests() {
     const fetchContactRequests = async () => {
       console.log("📡 Fetching contact requests from Supabase...");
       const { data, error } = await supabase
-        .from('contact_requests')
+        .from('support')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -41,9 +41,11 @@ function ContactRequests() {
             <tr>
               <th>#</th>
               <th>Name</th>
+              <th>Username</th>
               <th>Email</th>
               <th>Subject</th>
               <th>Message</th>
+              <th>Attached Images</th>
               <th>Submitted At</th>
             </tr>
           </thead>
@@ -52,9 +54,10 @@ function ContactRequests() {
               <tr key={request.id}>
                 <td>{index + 1}</td>
                 <td>{request.name || '—'}</td>
+                <td>{request.username || '—'}</td>
                 <td>
                   <a href={`mailto:${request.email}`} className="text-blue-500 hover:underline">
-                    {request.email}
+                    {request.email || '—'}
                   </a>
                 </td>
                 <td>{request.subject || '—'}</td>
@@ -62,6 +65,13 @@ function ContactRequests() {
                   <div className="truncate" title={request.message}>
                     {request.message || '—'}
                   </div>
+                </td>
+                <td>
+                  {request.attached_imgs ? (
+                    <a href={request.attached_imgs} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                      View
+                    </a>
+                  ) : '—'}
                 </td>
                 <td>{new Date(request.created_at).toLocaleString()}</td>
               </tr>

@@ -25,6 +25,7 @@ export default function Index() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
   const [showBetaPlatforms, setShowBetaPlatforms] = useState(false);
+  const [showAndroidMessage, setShowAndroidMessage] = useState(false);
   const notifyRef = useRef(null);
 
   const handleScrollToNotify = () => {
@@ -94,7 +95,7 @@ export default function Index() {
                 className="bg-white text-black p-3 sm:p-4 rounded-lg hover:bg-black hover:text-white flex items-center gap-2 transition-all duration-300 text-sm sm:text-base w-full sm:w-auto"
               >
                 <Mail size={20} />
-                Notify Me
+                Download Bhasha
               </button>
             </div>
             
@@ -112,15 +113,29 @@ export default function Index() {
                   </svg>
                   iOS
                 </a>
-                <button
-                  onClick={() => alert("Hi")}
-                  className="bg-black border-2 border-green-500 text-green-500 p-3 sm:p-4 rounded-lg hover:bg-green-500 hover:text-black flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold w-full sm:w-auto justify-center"
-                >
-                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.551 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.5032C17.5902 8.2439 16.8553 7.8508 16.0446 7.8508c-2.5543 0-4.6355 2.0812-4.6355 4.6355 0 .49.0822.9618.2132 1.4116l-2.4627 1.7527c-.3058-.9348-1.177-1.6294-2.2211-1.6294-1.3126 0-2.3818 1.0692-2.3818 2.3818 0 1.3125 1.0692 2.3817 2.3818 2.3817 1.044 0 1.9152-.6946 2.2211-1.6294l2.4627 1.7527c-.131.4498-.2132.9216-.2132 1.4116 0 2.5543 2.0812 4.6355 4.6355 4.6355 2.5542 0 4.6355-2.0812 4.6355-4.6355 0-2.126-1.4447-3.9087-3.4006-4.4218zm-1.0465 8.5838c0 1.3125-1.0692 2.3817-2.3818 2.3817-1.3125 0-2.3817-1.0692-2.3817-2.3817 0-1.3126 1.0692-2.3818 2.3817-2.3818 1.3126 0 2.3818 1.0692 2.3818 2.3818z"/>
-                  </svg>
-                  Android
-                </button>
+                {showAndroidMessage ? (
+                  <div className="flex flex-col items-center gap-3 w-full sm:w-auto">
+                    <p className="text-green-500 text-sm sm:text-base text-center">
+                      We will be releasing on Google Play soon. If you really can&apos;t wait,{" "}
+                      <Link href="/support">
+                        <button className="text-green-500 bg-green-500/10 border-2 border-green-500 px-3 py-1.5 rounded-lg font-semibold hover:bg-green-500 hover:text-black transition-all duration-300 inline-block">
+                          contact us here
+                        </button>
+                      </Link>{" "}
+                      for early access
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowAndroidMessage(true)}
+                    className="bg-black border-2 border-green-500 text-green-500 p-3 sm:p-4 rounded-lg hover:bg-green-500 hover:text-black flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold w-full sm:w-auto justify-center"
+                  >
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.551 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.5032C17.5902 8.2439 16.8553 7.8508 16.0446 7.8508c-2.5543 0-4.6355 2.0812-4.6355 4.6355 0 .49.0822.9618.2132 1.4116l-2.4627 1.7527c-.3058-.9348-1.177-1.6294-2.2211-1.6294-1.3126 0-2.3818 1.0692-2.3818 2.3818 0 1.3125 1.0692 2.3817 2.3818 2.3817 1.044 0 1.9152-.6946 2.2211-1.6294l2.4627 1.7527c-.131.4498-.2132.9216-.2132 1.4116 0 2.5543 2.0812 4.6355 4.6355 4.6355 2.5542 0 4.6355-2.0812 4.6355-4.6355 0-2.126-1.4447-3.9087-3.4006-4.4218zm-1.0465 8.5838c0 1.3125-1.0692 2.3817-2.3818 2.3817-1.3125 0-2.3817-1.0692-2.3817-2.3817 0-1.3126 1.0692-2.3818 2.3817-2.3818 1.3126 0 2.3818 1.0692 2.3818 2.3818z"/>
+                    </svg>
+                    Android
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -136,21 +151,64 @@ export default function Index() {
 
       <section id="about" className="w-full flex justify-center bg-gray-200 py-12 sm:py-16 relative overflow-hidden">
         <div className="relative z-10 w-full max-w-6xl text-left text-[#e67732] px-4 sm:px-6">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold py-6 sm:py-10">Who we are?</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold py-6 sm:py-10">What is Bhasha?</h1>
+          
           <p className="text-base sm:text-lg py-2 text-black">
-            Bhāsha was founded with the goal of making Indian language learning as simple as possible.
+            Bhasha is built for the modern learner. Instead of forcing a rigid course on you, we give you the ability to learn your way, at your own pace, using a plethora of open-world language learning tools.
           </p>
-          <p className="text-base sm:text-lg py-2 text-black">
-            Currently, there are limited resources to learn Indian languages online, which are not customizable to a
-            user's personalized needs.
-          </p>
-          <p className="text-base sm:text-lg py-2 text-black">
-            Our vision is to offer all of India's major languages in one app, and to spearhead a movement to spread
-            awareness on the beauty and rich history of Indian languages.
-          </p>
-          <p className="text-base sm:text-lg py-2 text-black">Choose a language and we'll take care of the rest.</p>
 
-          <p className="text-xl sm:text-2xl italic font-bold py-4 sm:py-5 text-black">Join Us.</p>
+          <p className="text-base sm:text-lg py-2 text-black">
+            Oh, and we also have a fantastic hand-crafted curriculum, so you can take both the structured and the open-world approach to learning. Or you can take both at the same time. It&apos;s your choice, and that&apos;s what makes Bhasha special.
+          </p>
+
+          <p className="text-base sm:text-lg py-2 text-black">
+            With Bhasha, you&apos;ll learn grammar, pronunciation and script. You&apos;ll pick up useful phrases, understand sentence patterns and gain the confidence to speak naturally. The best part? You&apos;ll decide how you learn.
+          </p>
+
+          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8 py-6 sm:py-8">
+            <div className="flex-1">
+              <h2 className="text-2xl sm:text-3xl font-bold py-4 md:py-0 text-[#e67732]">Why learn with Bhasha:</h2>
+
+              <ul className="list-disc list-inside text-base sm:text-lg py-2 text-black space-y-2 ml-4">
+                <li>Short, bite-sized lessons that can be completed on-the-go</li>
+                <li>Freedom to learn the script intuitively on your own time</li>
+                <li>Smart progress tracking so you stay consistent</li>
+                <li>Smart notes that bring every word to life</li>
+              </ul>
+
+              <p className="text-base sm:text-lg py-4 text-black">
+                Available today in the following languages, with more being added soon!
+              </p>
+
+              <h3 className="text-xl sm:text-2xl font-bold py-4 text-[#e67732]">Available languages:</h3>
+              <ul className="list-disc list-inside text-base sm:text-lg py-2 text-black space-y-2 ml-4">
+                <li>Telugu</li>
+              </ul>
+
+              <div className="py-6 sm:py-8">
+                {/* Show image above button on mobile only */}
+                <div className="md:hidden mb-6 flex justify-center">
+                  <img 
+                    src="/images/vaani.png" 
+                    alt="Vaani the Bhasha mascot" 
+                    className="w-48 h-auto"
+                  />
+                </div>
+                <Link href="/support">
+                  <button className="mt-4 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg">
+                    Join Us Here
+                  </button>
+                </Link>
+              </div>
+            </div>
+            <div className="hidden md:block flex-shrink-0 md:max-w-xs lg:max-w-sm">
+              <img 
+                src="/images/vaani.png" 
+                alt="Vaani the Bhasha mascot" 
+                className="w-full h-auto"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
@@ -174,12 +232,12 @@ export default function Index() {
             },
             {
               name: "Rhythm Chawla",
-              role: "Software Developer",
-              img: "/images/rhythm.jpg",
+              role: "Founding Engineer",
+              img: "/images/rhythm.JPG",
             },
             {
               name: "Abhinav Jain",
-              role: "Web Developer",
+              role: "Mobile Developer",
               img: "/images/abhi.png",
             },
             {

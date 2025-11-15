@@ -6,9 +6,11 @@ import { Mail, HelpCircle, BookOpen, Shield, MessageSquare, Clock } from 'lucide
 export default function Support() {
   const [formData, setFormData] = useState({
     name: '',
+    username: '',
     email: '',
     subject: '',
-    message: ''
+    message: '',
+    attached_imgs: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null) // 'success' or 'error'
@@ -19,14 +21,15 @@ export default function Support() {
     setSubmitStatus(null)
 
     try {
-      // Insert contact request into Supabase
-      const { error } = await supabase.from('contact_requests').insert([
+      // Insert contact request into Supabase support table
+      const { error } = await supabase.from('support').insert([
         {
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject,
-          message: formData.message,
-          created_at: new Date().toISOString()
+          name: formData.name || null,
+          username: formData.username || null,
+          email: formData.email || null,
+          subject: formData.subject || null,
+          message: formData.message || null,
+          attached_imgs: formData.attached_imgs || null
         }
       ])
 
@@ -35,7 +38,7 @@ export default function Support() {
       }
 
       setSubmitStatus('success')
-      setFormData({ name: '', email: '', subject: '', message: '' })
+      setFormData({ name: '', username: '', email: '', subject: '', message: '', attached_imgs: '' })
     } catch (error) {
       console.error('Error submitting form:', error)
       setSubmitStatus('error')
@@ -128,26 +131,39 @@ export default function Support() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      required
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-orange-200/50 focus:outline-none focus:ring-2 focus:ring-orange-300/50"
                       placeholder="John Doe"
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-orange-100/90 mb-2">
-                      Your Email
+                    <label htmlFor="username" className="block text-sm font-medium text-orange-100/90 mb-2">
+                      Username (Optional)
                     </label>
                     <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={formData.username}
                       onChange={handleChange}
-                      required
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-orange-200/50 focus:outline-none focus:ring-2 focus:ring-orange-300/50"
-                      placeholder="john@example.com"
+                      placeholder="johndoe"
                     />
                   </div>
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-orange-100/90 mb-2">
+                    Your Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-orange-200/50 focus:outline-none focus:ring-2 focus:ring-orange-300/50"
+                    placeholder="john@example.com"
+                  />
                 </div>
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-orange-100/90 mb-2">
@@ -177,6 +193,20 @@ export default function Support() {
                     rows={5}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-orange-200/50 focus:outline-none focus:ring-2 focus:ring-orange-300/50 resize-none"
                     placeholder="Tell us about your question or feedback..."
+                  />
+                </div>
+                <div>
+                  <label htmlFor="attached_imgs" className="block text-sm font-medium text-orange-100/90 mb-2">
+                    Attached Images URL (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    id="attached_imgs"
+                    name="attached_imgs"
+                    value={formData.attached_imgs}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-orange-200/50 focus:outline-none focus:ring-2 focus:ring-orange-300/50"
+                    placeholder="https://example.com/image.jpg"
                   />
                 </div>
                 {submitStatus === 'success' && (
