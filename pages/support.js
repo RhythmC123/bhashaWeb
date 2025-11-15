@@ -52,14 +52,14 @@ export default function Support() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#1a0f07] to-[#2d0d00] text-white flex flex-col">
+    <div className="min-h-screen w-full bg-gradient-to-br from-black via-[#1a0f07] to-[#2d0d00] text-white flex flex-col overflow-x-hidden">
       {/* Header */}
       <header className="w-full">
-        <div className="container mx-auto flex items-center justify-between py-6 px-6">
-          <div className="flex items-center gap-3">
-            <img src="/images/bhasha.jpeg" alt="LearnWithBhasha" className="h-10 w-10 rounded-full ring-2 ring-orange-300/60 shadow-lg" />
-            <div>
-              <p className="text-xl font-extrabold tracking-tight">LearnWithBhasha</p>
+        <div className="w-full max-w-full mx-auto flex items-center justify-between py-4 sm:py-6 px-4 sm:px-6">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <img src="/images/bhasha.jpeg" alt="LearnWithBhasha" className="h-8 w-8 sm:h-10 sm:w-10 rounded-full ring-2 ring-orange-300/60 shadow-lg flex-shrink-0" />
+            <div className="min-w-0">
+              <p className="text-base sm:text-xl font-extrabold tracking-tight truncate">LearnWithBhasha</p>
               <p className="text-xs text-orange-200/80">Support Center</p>
             </div>
           </div>
@@ -70,17 +70,17 @@ export default function Support() {
       </header>
 
       {/* Content */}
-      <main className="flex-1 px-6 py-10">
-        <div className="container mx-auto max-w-4xl">
+      <main className="flex-1 w-full px-4 sm:px-6 py-6 sm:py-10">
+        <div className="w-full max-w-4xl mx-auto">
           {/* App Info Section */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-10 mb-8">
-            <div className="flex items-center gap-4 mb-6">
-              <img src="/images/bhasha.jpeg" alt="LearnWithBhasha Logo" className="h-16 w-16 rounded-full ring-2 ring-orange-300/60" />
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-10 mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 mb-6">
+              <img src="/images/bhasha.jpeg" alt="LearnWithBhasha Logo" className="h-16 w-16 sm:h-20 sm:w-20 rounded-full ring-2 ring-orange-300/60 flex-shrink-0" />
+              <div className="text-center sm:text-left w-full">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent">
                   LearnWithBhasha
                 </h1>
-                <p className="text-orange-100/90 mt-2">
+                <p className="text-orange-100/90 mt-2 text-sm sm:text-base">
                   Learn Indian Languages - Your personalized journey to mastering India's beautiful languages
                 </p>
               </div>
@@ -88,36 +88,36 @@ export default function Support() {
           </div>
 
           {/* Contact Section */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-10 mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-              <Mail className="text-orange-300" size={28} />
-              Get in Touch
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-10 mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+              <Mail className="text-orange-300 flex-shrink-0" size={24} />
+              <span>Get in Touch</span>
             </h2>
 
             <div className="mb-6">
-              <p className="text-orange-100/90 mb-4">
+              <p className="text-orange-100/90 mb-4 text-sm sm:text-base">
                 We're here to help! Reach out to us using any of the methods below:
               </p>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
                 <a 
                   href="mailto:support@learnwithbhasha.com" 
-                  className="text-orange-300 hover:text-orange-200 transition-colors flex items-center gap-2 text-lg font-medium"
+                  className="text-orange-300 hover:text-orange-200 transition-colors flex items-center gap-2 text-base sm:text-lg font-medium break-all"
                 >
-                  <Mail size={20} />
-                  support@learnwithbhasha.com
+                  <Mail size={20} className="flex-shrink-0" />
+                  <span className="break-all">support@learnwithbhasha.com</span>
                 </a>
               </div>
-              <div className="flex items-center gap-2 text-orange-100/80 text-sm">
-                <Clock size={16} />
+              <div className="flex items-center gap-2 text-orange-100/80 text-xs sm:text-sm">
+                <Clock size={16} className="flex-shrink-0" />
                 <p>We usually respond within 24–48 hours.</p>
               </div>
             </div>
 
             {/* Contact Form */}
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold text-orange-100 mb-4">Send us a message</h3>
+            <div className="mt-6 sm:mt-8">
+              <h3 className="text-lg sm:text-xl font-semibold text-orange-100 mb-4">Send us a message</h3>
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-orange-100/90 mb-2">
                       Your Name
@@ -201,58 +201,58 @@ export default function Support() {
           </div>
 
           {/* FAQs Section */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-10 mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-              <HelpCircle className="text-orange-300" size={28} />
-              Frequently Asked Questions
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-10 mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+              <HelpCircle className="text-orange-300 flex-shrink-0" size={24} />
+              <span>Frequently Asked Questions</span>
             </h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-2">How do I create an account?</h3>
-                <p className="text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">How do I create an account?</h3>
+                <p className="text-orange-100/90 text-sm sm:text-base">
                   You can create an account by signing in with Google. Simply tap the "Sign In" button on the app's home screen and follow the prompts. Your account will be created automatically when you sign in for the first time.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-2">I forgot my password. How do I reset it?</h3>
-                <p className="text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">I forgot my password. How do I reset it?</h3>
+                <p className="text-orange-100/90 text-sm sm:text-base">
                   Since we use Google Sign-In, you don't need a separate password. If you're having trouble signing in, make sure you're using the same Google account you used when you first created your account. If issues persist, please contact our support team.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-2">How do I change my learning language?</h3>
-                <p className="text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">How do I change my learning language?</h3>
+                <p className="text-orange-100/90 text-sm sm:text-base">
                   You can change your learning language at any time from the app settings. Go to your profile, select "Settings," and choose "Change Language" to switch to a different Indian language.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-2">My progress isn't saving. What should I do?</h3>
-                <p className="text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">My progress isn't saving. What should I do?</h3>
+                <p className="text-orange-100/90 text-sm sm:text-base">
                   Make sure you're signed in to your account and have a stable internet connection. If your progress still isn't saving, try signing out and signing back in. If the problem continues, please contact support with details about when this started happening.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-2">The app is crashing or freezing. How can I fix this?</h3>
-                <p className="text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">The app is crashing or freezing. How can I fix this?</h3>
+                <p className="text-orange-100/90 text-sm sm:text-base">
                   First, try closing and reopening the app. If that doesn't help, try restarting your device. Make sure you have the latest version of the app installed. If the issue persists, please contact us with your device model and the version of the app you're using.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-2">Can I use the app offline?</h3>
-                <p className="text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">Can I use the app offline?</h3>
+                <p className="text-orange-100/90 text-sm sm:text-base">
                   Some features require an internet connection, but you can download lessons for offline use. Go to your course, tap on a lesson, and select "Download for Offline" to access it without internet.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-2">How do I delete my account?</h3>
-                <p className="text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">How do I delete my account?</h3>
+                <p className="text-orange-100/90 text-sm sm:text-base">
                   To delete your account, please contact our support team at support@learnwithbhasha.com with your request. We'll process your account deletion within 7 business days. Note that this action cannot be undone.
                 </p>
               </div>
@@ -260,24 +260,24 @@ export default function Support() {
           </div>
 
           {/* Help Resources Section */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-10 mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent mb-6 flex items-center gap-3">
-              <BookOpen className="text-orange-300" size={28} />
-              Help Resources
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-10 mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent mb-4 sm:mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
+              <BookOpen className="text-orange-300 flex-shrink-0" size={24} />
+              <span>Help Resources</span>
             </h2>
 
             <div className="space-y-4">
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-3">Legal & Privacy</h3>
-                <ul className="space-y-2 text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-3">Legal & Privacy</h3>
+                <ul className="space-y-2 text-orange-100/90 text-sm sm:text-base">
                   <li>• <Link href="/privacy" className="text-orange-300 hover:text-orange-200 transition-colors underline">Privacy Policy</Link> - How we protect your data</li>
                   <li>• <Link href="/terms" className="text-orange-300 hover:text-orange-200 transition-colors underline">Terms & Conditions</Link> - Terms of service</li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-orange-100 mb-3">Connect With Us</h3>
-                <ul className="space-y-2 text-orange-100/90">
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-3">Connect With Us</h3>
+                <ul className="space-y-2 text-orange-100/90 text-sm sm:text-base">
                   <li>• <a href="https://www.instagram.com/learnwithbhasha?igsh=YjdhaHh4amU1YWdj" target="_blank" rel="noopener noreferrer" className="text-orange-300 hover:text-orange-200 transition-colors underline">Instagram</a> - Follow us for updates and tips</li>
                 </ul>
               </div>
@@ -285,23 +285,23 @@ export default function Support() {
           </div>
 
           {/* App Version Info */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-10 mb-8">
-            <h2 className="text-xl font-semibold text-orange-100 mb-4">App Information</h2>
-            <div className="space-y-2 text-orange-100/90">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-10 mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-xl font-semibold text-orange-100 mb-4">App Information</h2>
+            <div className="space-y-2 text-orange-100/90 text-sm sm:text-base">
               <p><span className="font-medium">Current Version:</span> 1.0.0</p>
               <p><span className="font-medium">Last Updated:</span> January 2025</p>
-              <p className="text-sm text-orange-200/70 mt-4">
+              <p className="text-xs sm:text-sm text-orange-200/70 mt-4">
                 Make sure you're using the latest version to get the best experience and latest features. You can check for updates in your device's app store.
               </p>
             </div>
           </div>
 
           {/* Apple Review Statement */}
-          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-6 sm:p-10">
+          <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-3xl shadow-2xl p-4 sm:p-6 lg:p-10">
             <div className="flex items-start gap-3">
-              <Shield className="text-orange-300 mt-1" size={24} />
+              <Shield className="text-orange-300 mt-1 flex-shrink-0" size={20} />
               <div>
-                <p className="text-orange-100/90 leading-relaxed">
+                <p className="text-orange-100/90 leading-relaxed text-sm sm:text-base">
                   <strong className="text-orange-100">This page is for support of LearnWithBhasha app users.</strong> If you experience any issues, please contact us using the information above. We're committed to providing you with the best learning experience and are here to help with any questions or concerns you may have.
                 </p>
               </div>
@@ -311,10 +311,10 @@ export default function Support() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full py-6 px-6 text-center text-xs text-orange-200/70">
-        <div className="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <footer className="w-full py-4 sm:py-6 px-4 sm:px-6 text-center text-xs text-orange-200/70">
+        <div className="w-full max-w-full mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
           <p>© LearnWithBhasha 2025</p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-wrap justify-center">
             <Link href="/privacy" className="hover:text-orange-100 transition-colors">Privacy</Link>
             <span className="text-orange-200/40">|</span>
             <Link href="/terms" className="hover:text-orange-100 transition-colors">Terms</Link>

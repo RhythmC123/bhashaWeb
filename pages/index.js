@@ -24,6 +24,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const [showBetaPlatforms, setShowBetaPlatforms] = useState(false);
   const notifyRef = useRef(null);
 
   const handleScrollToNotify = () => {
@@ -61,7 +62,7 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-serif">
+    <div className="min-h-screen bg-black text-white font-serif overflow-x-hidden" style={{ maxWidth: '100vw', width: '100%' }}>
       <Navbar />
 
       {/* Main content */}
@@ -80,13 +81,49 @@ export default function Index() {
             Coming soon
           </p>
           
-          <button
-            onClick={handleScrollToNotify}
-            className="bg-white text-black p-3 sm:p-4 rounded-lg hover:bg-black hover:text-white flex items-center gap-2 transition-all duration-300 text-sm sm:text-base mx-auto lg:mx-0"
-          >
-            <Mail size={20} />
-            Notify Me
-          </button>
+          <div className="flex flex-col items-center gap-3 sm:gap-4 mx-auto lg:mx-0">
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
+              <button
+                onClick={() => setShowBetaPlatforms(!showBetaPlatforms)}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3 sm:p-4 rounded-lg hover:from-orange-600 hover:to-orange-700 flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold shadow-lg w-full sm:w-auto"
+              >
+                Get Beta Access
+              </button>
+              <button
+                onClick={handleScrollToNotify}
+                className="bg-white text-black p-3 sm:p-4 rounded-lg hover:bg-black hover:text-white flex items-center gap-2 transition-all duration-300 text-sm sm:text-base w-full sm:w-auto"
+              >
+                <Mail size={20} />
+                Notify Me
+              </button>
+            </div>
+            
+            {/* Platform Selection Buttons */}
+            {showBetaPlatforms && (
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto transition-all duration-300">
+                <a
+                  href="https://testflight.apple.com/join/eCUhtP9V"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-black border-2 border-white text-white p-3 sm:p-4 rounded-lg hover:bg-white hover:text-black flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold w-full sm:w-auto justify-center"
+                >
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.96-3.24-1.44-1.88-.78-2.91-1.21-3.24-2.12-.28-.78-.02-1.94.7-3.08.7-1.09 1.54-2.19 2.52-3.27.98-1.08 2.1-2.2 3.25-3.35.78-.78 1.64-1.38 2.58-1.8 1.05-.48 2.05-.56 3.08-.08.98.45 1.99 1.01 3.24 1.64l-1.55 2.35c-.98-.61-1.88-1.1-2.72-1.5-.78-.36-1.5-.3-2.18.12-.6.38-1.2 1.02-1.82 1.68-.62.66-1.26 1.34-1.92 2.02-.66.68-1.34 1.36-2.02 2.02-.66.62-1.3 1.22-1.68 1.82-.42.68-.48 1.4-.12 2.18.4.84.89 1.74 1.5 2.72l-2.35 1.55c-.63-1.25-1.19-2.26-1.64-3.24z"/>
+                  </svg>
+                  iOS
+                </a>
+                <button
+                  onClick={() => alert("Hi")}
+                  className="bg-black border-2 border-green-500 text-green-500 p-3 sm:p-4 rounded-lg hover:bg-green-500 hover:text-black flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold w-full sm:w-auto justify-center"
+                >
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.551 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.5032C17.5902 8.2439 16.8553 7.8508 16.0446 7.8508c-2.5543 0-4.6355 2.0812-4.6355 4.6355 0 .49.0822.9618.2132 1.4116l-2.4627 1.7527c-.3058-.9348-1.177-1.6294-2.2211-1.6294-1.3126 0-2.3818 1.0692-2.3818 2.3818 0 1.3125 1.0692 2.3817 2.3818 2.3817 1.044 0 1.9152-.6946 2.2211-1.6294l2.4627 1.7527c-.131.4498-.2132.9216-.2132 1.4116 0 2.5543 2.0812 4.6355 4.6355 4.6355 2.5542 0 4.6355-2.0812 4.6355-4.6355 0-2.126-1.4447-3.9087-3.4006-4.4218zm-1.0465 8.5838c0 1.3125-1.0692 2.3817-2.3818 2.3817-1.3125 0-2.3817-1.0692-2.3817-2.3817 0-1.3126 1.0692-2.3818 2.3817-2.3818 1.3126 0 2.3818 1.0692 2.3818 2.3818z"/>
+                  </svg>
+                  Android
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Right Side: 3D Logo */}

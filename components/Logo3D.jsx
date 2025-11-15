@@ -9,7 +9,7 @@ import {
 } from "@react-three/drei";
 
 // Spinning 3D Logo Component
-function SpinningModel({ setCameraLog }) {
+function SpinningModel() {
   const groupRef = useRef();
   const { scene } = useGLTF("/models/fff.glb");
 
@@ -18,15 +18,6 @@ function SpinningModel({ setCameraLog }) {
   const isInteracting = useRef(false);
 
   useFrame(() => {
-    const pos = camera.position;
-    const tgt = controlsRef.current?.target;
-
-    if (setCameraLog && tgt) {
-      setCameraLog(
-        `Camera: [${pos.x.toFixed(2)}, ${pos.y.toFixed(2)}, ${pos.z.toFixed(2)}]\nTarget: [${tgt.x.toFixed(2)}, ${tgt.y.toFixed(2)}, ${tgt.z.toFixed(2)}]`
-      );
-    }
-
     if (!isInteracting.current && groupRef.current) {
       groupRef.current.rotation.y += 0.005;
     }
@@ -45,7 +36,7 @@ function SpinningModel({ setCameraLog }) {
       <OrbitControls
         ref={controlsRef}
         args={[camera, gl.domElement]}
-        enableZoom={true}
+        enableZoom={false}
         enableRotate={true}
         enablePan={true}
         target={[0, 1, 0]}
@@ -58,8 +49,6 @@ function SpinningModel({ setCameraLog }) {
 
 // Main Component
 export default function Logo3D() {
-  const [cameraLog, setCameraLog] = useState("");
-
   return (
     <div className="w-full h-full">
       <Canvas
@@ -101,7 +90,7 @@ export default function Logo3D() {
 
         {/* 3D Model */}
         <Suspense fallback={null}>
-          <SpinningModel setCameraLog={setCameraLog} />
+          <SpinningModel />
         </Suspense>
 
         {/* Enhanced contact shadows under model */}
