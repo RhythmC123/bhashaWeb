@@ -53,10 +53,10 @@ export default function NotifySection() {
       <div className="container mx-auto flex flex-col lg:flex-row items-start justify-between gap-10 p-10">
         {/* LEFT: Form */}
         <div className="flex-1">
-          <h1 className="text-4xl text-black font-bold py-10">Releasing in November</h1>
-          <p className="text-lg text-black">Get notified when we release.</p>
+          <h1 className="text-4xl text-black font-bold py-10"> Sign up for Bhasha News! </h1>
+          <p className="text-lg text-black"> You may get updates on Bhasha, feedback forms, and beta feature access. No, we will not spam you. </p>
           {isSubmitted ? (
-            <p className="text-lg text-green-600">Thank you! You will be notified soon.</p>
+            <p className="text-lg text-green-600"> You'll be kept in the loop! ) </p>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-black">
               <input
@@ -83,7 +83,7 @@ export default function NotifySection() {
                     animateBird ? "cursor-not-allowed opacity-50" : ""
                   }`}
                 >
-                  Notify Me
+                  Get News! (+1 swag)
                 </button>
                 {session?.user ? (
                   <button

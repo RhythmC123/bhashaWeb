@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import supabase from "@/lib/supabaseClient"; // Ensure this is the correct path to your Supabase client
+import supabase from "@/lib/supabaseClient";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -9,13 +9,6 @@ import Navbar from "@/components/Navbar";
 import NotifyMe from "@/components/NotifyMe";
 import Footer from "@/components/Footer";
 
-const animateTeam = dynamic(() =>
-  import("../hooks/animateTeam").then((mod) => mod.animateTeam), { ssr: false }
-);
-
-// Replace this line:
-// import BigLogo from "./bigLogo";
-
 const Logo3D = dynamic(() => import("../components/Logo3D"), { ssr: false });
 
 
@@ -24,8 +17,7 @@ export default function Index() {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
-  const [showBetaPlatforms, setShowBetaPlatforms] = useState(false);
-  const [showAndroidMessage, setShowAndroidMessage] = useState(false);
+  const [showDownloadOptions, setShowDownloadOptions] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const notifyRef = useRef(null);
 
@@ -95,25 +87,25 @@ export default function Index() {
           <div className="flex flex-col items-center gap-3 sm:gap-4 mx-auto lg:mx-0">
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <button
-                onClick={() => setShowBetaPlatforms(!showBetaPlatforms)}
+                onClick={() => setShowDownloadOptions(!showDownloadOptions)}
                 className="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-3 sm:p-4 rounded-lg hover:from-orange-600 hover:to-orange-700 flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold shadow-lg w-full sm:w-auto"
               >
-                Get Beta Access
+                Download Bhasha!
               </button>
               <button
                 onClick={handleScrollToNotify}
                 className="bg-white text-black p-3 sm:p-4 rounded-lg hover:bg-black hover:text-white flex items-center gap-2 transition-all duration-300 text-sm sm:text-base w-full sm:w-auto"
               >
                 <Mail size={20} />
-                Download Bhasha
+                Get Bhasha news
               </button>
             </div>
             
             {/* Platform Selection Buttons */}
-            {showBetaPlatforms && (
+            {showDownloadOptions && (
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto transition-all duration-300">
                 <a
-                  href="https://testflight.apple.com/join/eCUhtP9V"
+                  href="https://apps.apple.com/us/app/learn-with-bhasha/id6755058645"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-black border-2 border-white text-white p-3 sm:p-4 rounded-lg hover:bg-white hover:text-black flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold w-full sm:w-auto justify-center"
@@ -123,29 +115,18 @@ export default function Index() {
                   </svg>
                   iOS
                 </a>
-                {showAndroidMessage ? (
-                  <div className="flex flex-col items-center gap-3 w-full sm:w-auto">
-                    <p className="text-green-500 text-sm sm:text-base text-center">
-                      We will be releasing on Google Play soon. If you really can&apos;t wait,{" "}
-                      <Link href="/support">
-                        <button className="text-green-500 bg-green-500/10 border-2 border-green-500 px-3 py-1.5 rounded-lg font-semibold hover:bg-green-500 hover:text-black transition-all duration-300 inline-block">
-                          contact us here
-                        </button>
-                      </Link>{" "}
-                      for early access
-                    </p>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setShowAndroidMessage(true)}
-                    className="bg-black border-2 border-green-500 text-green-500 p-3 sm:p-4 rounded-lg hover:bg-green-500 hover:text-black flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold w-full sm:w-auto justify-center"
-                  >
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.551 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.5032C17.5902 8.2439 16.8553 7.8508 16.0446 7.8508c-2.5543 0-4.6355 2.0812-4.6355 4.6355 0 .49.0822.9618.2132 1.4116l-2.4627 1.7527c-.3058-.9348-1.177-1.6294-2.2211-1.6294-1.3126 0-2.3818 1.0692-2.3818 2.3818 0 1.3125 1.0692 2.3817 2.3818 2.3817 1.044 0 1.9152-.6946 2.2211-1.6294l2.4627 1.7527c-.131.4498-.2132.9216-.2132 1.4116 0 2.5543 2.0812 4.6355 4.6355 4.6355 2.5542 0 4.6355-2.0812 4.6355-4.6355 0-2.126-1.4447-3.9087-3.4006-4.4218zm-1.0465 8.5838c0 1.3125-1.0692 2.3817-2.3818 2.3817-1.3125 0-2.3817-1.0692-2.3817-2.3817 0-1.3126 1.0692-2.3818 2.3817-2.3818 1.3126 0 2.3818 1.0692 2.3818 2.3818z"/>
-                    </svg>
-                    Android
-                  </button>
-                )}
+                
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.bhasha.app" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-black border-2 border-green-500 text-green-500 p-3 sm:p-4 rounded-lg hover:bg-green-500 hover:text-black flex items-center gap-2 transition-all duration-300 text-sm sm:text-base font-semibold w-full sm:w-auto justify-center"
+                >
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997 0-.5511.4482-.9993.9993-.9993.551 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.9973-3.4592a.416.416 0 00-.1521-.5676.416.416 0 00-.5676.1521l-2.0223 3.5032C17.5902 8.2439 16.8553 7.8508 16.0446 7.8508c-2.5543 0-4.6355 2.0812-4.6355 4.6355 0 .49.0822.9618.2132 1.4116l-2.4627 1.7527c-.3058-.9348-1.177-1.6294-2.2211-1.6294-1.3126 0-2.3818 1.0692-2.3818 2.3818 0 1.3125 1.0692 2.3817 2.3818 2.3817 1.044 0 1.9152-.6946 2.2211-1.6294l2.4627 1.7527c-.131.4498-.2132.9216-.2132 1.4116 0 2.5543 2.0812 4.6355 4.6355 4.6355 2.5542 0 4.6355-2.0812 4.6355-4.6355 0-2.126-1.4447-3.9087-3.4006-4.4218zm-1.0465 8.5838c0 1.3125-1.0692 2.3817-2.3818 2.3817-1.3125 0-2.3817-1.0692-2.3817-2.3817 0-1.3126 1.0692-2.3818 2.3817-2.3818 1.3126 0 2.3818 1.0692 2.3818 2.3818z"/>
+                  </svg>
+                  Android
+                </a>
               </div>
             )}
           </div>
