@@ -353,7 +353,7 @@ export default function Index() {
             },
             {
               name: "Amvi Dwivedi",
-              role: "Marketer",
+              role: "Head of Marketing",
               img: "/images/amvi.png",
             },
           ].map((member, idx) => (
