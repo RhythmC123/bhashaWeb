@@ -84,7 +84,7 @@ export default function Support() {
                   LearnWithBhasha
                 </h1>
                 <p className="text-orange-100/90 mt-2 text-sm sm:text-base">
-                  Learn Indian Languages - Your personalized journey to mastering India's beautiful languages
+                  Learn Indian Languages - Your personalized journey to mastering India&apos;s beautiful languages
                 </p>
               </div>
             </div>
@@ -99,7 +99,7 @@ export default function Support() {
 
             <div className="mb-6">
               <p className="text-orange-100/90 mb-4 text-sm sm:text-base">
-                We're here to help! Reach out to us using any of the methods below:
+                We&apos;re here to help! Reach out to us using any of the methods below:
               </p>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
                 <a 
@@ -211,7 +211,7 @@ export default function Support() {
                 </div>
                 {submitStatus === 'success' && (
                   <div className="p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-200">
-                    Thank you! Your message has been sent. We'll get back to you soon.
+                    Thank you! Your message has been sent. We&apos;ll get back to you soon.
                   </div>
                 )}
                 {submitStatus === 'error' && (
@@ -241,49 +241,49 @@ export default function Support() {
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">How do I create an account?</h3>
                 <p className="text-orange-100/90 text-sm sm:text-base">
-                  You can create an account by signing in with Google. Simply tap the "Sign In" button on the app's home screen and follow the prompts. Your account will be created automatically when you sign in for the first time.
+                  You can create an account by signing in with Google. Simply tap the &quot;Sign In&quot; button on the app&apos;s home screen and follow the prompts. Your account will be created automatically when you sign in for the first time.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">I forgot my password. How do I reset it?</h3>
                 <p className="text-orange-100/90 text-sm sm:text-base">
-                  Since we use Google Sign-In, you don't need a separate password. If you're having trouble signing in, make sure you're using the same Google account you used when you first created your account. If issues persist, please contact our support team.
+                  Since we use Google Sign-In, you don&apos;t need a separate password. If you&apos;re having trouble signing in, make sure you&apos;re using the same Google account you used when you first created your account. If issues persist, please contact our support team.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">How do I change my learning language?</h3>
                 <p className="text-orange-100/90 text-sm sm:text-base">
-                  You can change your learning language at any time from the app settings. Go to your profile, select "Settings," and choose "Change Language" to switch to a different Indian language.
+                  You can change your learning language at any time from the app settings. Go to your profile, select &quot;Settings,&quot; and choose &quot;Change Language&quot; to switch to a different Indian language.
                 </p>
               </div>
 
               <div>
-                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">My progress isn't saving. What should I do?</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">My progress isn&apos;t saving. What should I do?</h3>
                 <p className="text-orange-100/90 text-sm sm:text-base">
-                  Make sure you're signed in to your account and have a stable internet connection. If your progress still isn't saving, try signing out and signing back in. If the problem continues, please contact support with details about when this started happening.
+                  Make sure you&apos;re signed in to your account and have a stable internet connection. If your progress still isn&apos;t saving, try signing out and signing back in. If the problem continues, please contact support with details about when this started happening.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">The app is crashing or freezing. How can I fix this?</h3>
                 <p className="text-orange-100/90 text-sm sm:text-base">
-                  First, try closing and reopening the app. If that doesn't help, try restarting your device. Make sure you have the latest version of the app installed. If the issue persists, please contact us with your device model and the version of the app you're using.
+                  First, try closing and reopening the app. If that doesn&apos;t help, try restarting your device. Make sure you have the latest version of the app installed. If the issue persists, please contact us with your device model and the version of the app you&apos;re using.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">Can I use the app offline?</h3>
                 <p className="text-orange-100/90 text-sm sm:text-base">
-                  Some features require an internet connection, but you can download lessons for offline use. Go to your course, tap on a lesson, and select "Download for Offline" to access it without internet.
+                  Some features require an internet connection, but you can download lessons for offline use. Go to your course, tap on a lesson, and select &quot;Download for Offline&quot; to access it without internet.
                 </p>
               </div>
 
               <div>
                 <h3 className="text-base sm:text-lg font-semibold text-orange-100 mb-2">How do I delete my account?</h3>
                 <p className="text-orange-100/90 text-sm sm:text-base">
-                  To delete your account, please contact our support team at support@learnwithbhasha.com with your request. We'll process your account deletion within 7 business days. Note that this action cannot be undone.
+                  To delete your account, please contact our support team at support@learnwithbhasha.com with your request. We&apos;ll process your account deletion within 7 business days. Note that this action cannot be undone.
                 </p>
               </div>
             </div>
@@ -321,7 +321,7 @@ export default function Support() {
               <p><span className="font-medium">Current Version:</span> 1.0.0</p>
               <p><span className="font-medium">Last Updated:</span> January 2025</p>
               <p className="text-xs sm:text-sm text-orange-200/70 mt-4">
-                Make sure you're using the latest version to get the best experience and latest features. You can check for updates in your device's app store.
+                Make sure you&apos;re using the latest version to get the best experience and latest features. You can check for updates in your device&apos;s app store.
               </p>
             </div>
           </div>
@@ -332,7 +332,7 @@ export default function Support() {
               <Shield className="text-orange-300 mt-1 flex-shrink-0" size={20} />
               <div>
                 <p className="text-orange-100/90 leading-relaxed text-sm sm:text-base">
-                  <strong className="text-orange-100">This page is for support of LearnWithBhasha app users.</strong> If you experience any issues, please contact us using the information above. We're committed to providing you with the best learning experience and are here to help with any questions or concerns you may have.
+                  <strong className="text-orange-100">This page is for support of LearnWithBhasha app users.</strong> If you experience any issues, please contact us using the information above. We&apos;re committed to providing you with the best learning experience and are here to help with any questions or concerns you may have.
                 </p>
               </div>
             </div>
