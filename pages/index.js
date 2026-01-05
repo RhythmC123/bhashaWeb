@@ -81,7 +81,7 @@ export default function Index() {
             Learn Indian Languages
           </p>
           <p className="text-2xl sm:text-3xl lg:text-5xl text-green-500 opacity-80 font-light">
-            Coming soon
+            Download Now!
           </p>
           
           <div className="flex flex-col items-center gap-3 sm:gap-4 mx-auto lg:mx-0">
@@ -189,7 +189,7 @@ export default function Index() {
                 </div>
                 <Link href="/support">
                   <button className="mt-4 px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg">
-                    Join Us Here
+                    Reach out to us
                   </button>
                 </Link>
               </div>

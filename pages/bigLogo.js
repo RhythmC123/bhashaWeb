@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const messages = [
-  "જલ્દી આવે છે",        // Gujarati
-  "சமீபத்தில் வரும்",       // Tamil
-  "Coming Soon.",         // English
-  "త్వరలో వస్తుంది",        // Telugu
-  "आ रहा है",            // Hindi
+  "હમણાં ડાઉનલોડ કરો",    // Gujarati
+  "இப்போதே பதிவிறக்கவும்", // Tamil
+  "Download now!",       // English
+  "ఇప్పుడే డౌన్‌లోడ్ చేసుకోండి", // Telugu
+  "अभी डाउनलोड करें",     // Hindi
 ];
 
 export default function BigLogo() {
